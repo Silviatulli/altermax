@@ -1,0 +1,1 @@
+# minmax_transparency_project
