@@ -1,0 +1,10 @@
+bool finished_game
+bool wait
+bool robot_turn
+bool child_turn
+int64 minimizer_ball_0
+int64 minimizer_ball_1
+int64 maximizer_ball_0
+int64 maximizer_ball_1
+---
+bool success

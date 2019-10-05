@@ -1,0 +1,14 @@
+<launch>
+
+  <node name="planning_manager" pkg="minmax" type="planning_manager.py" output="screen" >
+  </node>
+  <node name="game_manager" pkg="minmax" type="game_manager.py" output="screen" >
+  </node>
+  <node name="decision_module" pkg="minmax" type="decision_module.py" output="screen" >
+  </node>
+  <node name="game_interface" pkg="minmax" type="game_interface.py" output="screen" >
+  </node>
+  <node name="robot_manager" pkg="minmax" type="robot_manager.py" output="screen" >
+  </node>
+
+</launch>

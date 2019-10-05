@@ -1,0 +1,11 @@
+int64 policy
+int64 depth
+int64 maximizer_ball_0
+int64 maximizer_ball_1
+int64 minimizer_ball_0
+int64 minimizer_ball_1
+---
+int64 ball
+int64 action
+int64 new_ball_score
+int64 score

@@ -1,0 +1,9 @@
+int64 depth
+int64 ball
+int64 action
+int64 score
+int64 best_ball
+int64 best_action
+int64 best_score
+---
+bool success
