@@ -1,4 +1,4 @@
-# minmax_transparency_project
+# minmax
 
 Install ROS and source catkin workspace: http://wiki.ros.org/catkin
 
