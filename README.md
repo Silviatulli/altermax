@@ -25,15 +25,15 @@
        RobotTalk.srv
      )
 
-If you work with the NAO Robot uncomment the line 7, from 41 to 65 and 87 in the file robot_manager.py.
+6) If you work with the NAO Robot uncomment the line 7, from 41 to 65 and 87 in the file robot_manager.py.
 Create a folder sdk that contains the pynaoqi sdk required and modify your bashrc ($gedit ~/.bashrc) to indicate the python and library path as following:
 - export PYTHONPATH=$PYTHONPATH:~/sdk/pynaoqi-python2.7-2.1.2.17-linux64
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/<your_pc_name>/sdk/pynaoqi-python2.7-2.1.2.17-linux64
 
-you can download the pynaoqi sdk following this guide: http://wiki.ros.org/nao/Tutorials/Installation
+7) you can download the pynaoqi sdk following this guide: http://wiki.ros.org/nao/Tutorials/Installation
 
-To run the code 
+8) To run the code 
 - open a terminal and launch: $ roscore
-- open a second terminal into your repository folder and launch minmax.launch: $roslaunch minmax.launch
+- open a second terminal into your repository folder and launch minmax.launch: $ roslaunch minmax.launch
 
 if you have any doubts please do not hesitate to contact me by e-mail
