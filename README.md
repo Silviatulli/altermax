@@ -6,7 +6,7 @@
     $ cd ~/catkin_ws
     $ catkin_make
 4) add the workspace to the ROS environment:
-    . ~/catkin_ws/devel/setup.bash
+    $. ~/catkin_ws/devel/setup.bash
 5) Make sure that the CMakeLists.txt file is configured properly, with all the services and the dependencies listed as follows:
     find_package(catkin REQUIRED COMPONENTS
       roscpp
