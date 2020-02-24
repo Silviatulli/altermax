@@ -32,4 +32,8 @@ Create a folder sdk that contains the pynaoqi sdk required and modify your bashr
 
 you can download the pynaoqi sdk following this guide: http://wiki.ros.org/nao/Tutorials/Installation
 
+To run the code 
+- open a terminal and launch: $ roscore
+- open a second terminal into your repository folder and launch minmax.launch: $roslaunch minmax.launch
+
 if you have any doubts please do not hesitate to contact me by e-mail
