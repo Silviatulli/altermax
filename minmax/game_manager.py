@@ -4,13 +4,12 @@ from std_srvs.srv import Empty
 import sys
 from src.utils import *
 from minmax.srv import *
+import pdb
 
 NODE_NAME = 'minmax_game_module'
 
 """
 Module responsible for the Game
-
-
 """
 
 class GameManager:
@@ -179,6 +178,7 @@ class GameManager:
         gstate_resp.success = True
         return gstate_resp
 
+
     def process_information(self):
 
         if not self.finished_game:
@@ -267,6 +267,7 @@ class GameManager:
             if not game_resp:
                 rospy.loginfo("[Game Manager] ERROR! Could not Freeze all balls.")
 
+
             # Next ask the robot to talk
             rospy.loginfo("[Game Manager] Asking robot to generate explanation.")
 
@@ -280,8 +281,6 @@ class GameManager:
         return
 
 
-
-
 if __name__ == "__main__":
     rospy.init_node(NODE_NAME)
     gm = GameManager()
@@ -290,18 +289,3 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         gm.process_information()
         rate.sleep()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,15 +5,13 @@ import sys
 from src.utils import *
 from minmax.srv import *
 import pygame as pg
-from pygame.locals import *
+import pygame.locals
 import math
 
 NODE_NAME = 'minmax_game_interface'
 
 """
 Module responsible for the Game Interface
-
-
 """
 
 # draw some text into an area of a surface
@@ -182,7 +180,9 @@ class CircleBall:
 
         if mouse_pos[0] > self.pos[0]-int(self.radius*0.5) and \
                 mouse_pos[0] <= self.pos[0] + self.radius and mouse_pos[1] > self.pos[1] - int(self.radius*0.5)\
-                and mouse_pos[1] <= self.pos[1] + self.radius:
+                and mouse_pos[1] <= self.pos[1] + self.radius or mouse_pos[1] > self.pos[1]-int(self.radius*0.5) and \
+                mouse_pos[1] <= self.pos[1] + self.radius and mouse_pos[0] > self.pos[0] - int(self.radius*0.5)\
+                and mouse_pos[0] <= self.pos[0] + self.radius:
             return True
         else:
             return False
@@ -253,7 +253,7 @@ class GameInterface:
         pg.init()
         self.ttt = pg.display.set_mode ((1920, 1080))
             #, flags=pg.NOFRAME)
-        pg.display.set_caption ('Guerra da Mini Calculadora')
+        pg.display.set_caption ('Minicomputer Tug of War')
 
         # Game control variables
         self.wait = False
@@ -277,22 +277,22 @@ class GameInterface:
         self.min_score_board = CounterBoardSquare(board_pos_dic["min_score"], "0", -1, board_color_dic["min_score"])
         self.max_score_board = CounterBoardSquare(board_pos_dic["max_score"], "0", -1, board_color_dic["max_score"])
 
-        self.box_800_board = BoardSquare(board_pos_dic["800"], " ", 800, lightbrown)
-        self.box_400_board = BoardSquare(board_pos_dic["400"], " ", 400, lightpink)
-        self.box_200_board = BoardSquare(board_pos_dic["200"], " ", 200, lightred)
+        self.box_800_board = BoardSquare(board_pos_dic["800"], " ", 800, white)
+        self.box_400_board = BoardSquare(board_pos_dic["400"], " ", 400, white)
+        self.box_200_board = BoardSquare(board_pos_dic["200"], " ", 200, white)
         self.box_100_board = BoardSquare(board_pos_dic["100"], " ", 100, white)
 
-        self.box_80_board = BoardSquare(board_pos_dic["80"], " ", 80, lightbrown)
-        self.box_40_board = BoardSquare(board_pos_dic["40"], " ", 40, lightpink)
-        self.box_20_board = BoardSquare(board_pos_dic["20"], " ", 20, lightred)
+        self.box_80_board = BoardSquare(board_pos_dic["80"], " ", 80, white)
+        self.box_40_board = BoardSquare(board_pos_dic["40"], " ", 40, white)
+        self.box_20_board = BoardSquare(board_pos_dic["20"], " ", 20, white)
         self.box_10_board = BoardSquare(board_pos_dic["10"], " ", 10, white)
 
-        self.box_8_board = BoardSquare(board_pos_dic["8"], " ", 8, lightbrown)
-        self.box_4_board = BoardSquare(board_pos_dic["4"], " ", 4, lightpink)
-        self.box_2_board = BoardSquare(board_pos_dic["2"], " ", 2, lightred)
+        self.box_8_board = BoardSquare(board_pos_dic["8"], " ", 8, white)
+        self.box_4_board = BoardSquare(board_pos_dic["4"], " ", 4, white)
+        self.box_2_board = BoardSquare(board_pos_dic["2"], " ", 2, white)
         self.box_1_board = BoardSquare(board_pos_dic["1"], " ", 1, white)
-        self.child_win_board = BoardSquare([640, 720, 500, 270], "Tu Ganhaste", -1, (211, 47, 47))
-        self.robot_win_board = BoardSquare([640, 720, 500, 270], "NAO Ganhou", -1, (83, 109, 254))
+        self.child_win_board = BoardSquare([640, 720, 500, 270], "You Win", -1, (211, 47, 47))
+        self.robot_win_board = BoardSquare([640, 720, 500, 270], "NAO Win", -1, (83, 109, 254))
         #self.play_again_board = BoardSquare([400, 300, 400, 450], "Joga De Novo", 0, white)
 
         self.board_list = [self.box_800_board, self.box_400_board, self.box_200_board, self.box_100_board,
@@ -301,8 +301,8 @@ class GameInterface:
 
         self.circle_min_ball_1 = CircleBall(self.box_800_board.get_center_pos(), 1, player_type_dic["min"], score=800)
         self.circle_min_ball_0 = CircleBall(self.box_200_board.get_center_pos(), 0, player_type_dic["min"], score=200)
-        self.circle_max_ball_0 = CircleBall(self.box_1_board.get_center_pos(), 0, player_type_dic["max"], score=1)
-        self.circle_max_ball_1 = CircleBall(self.box_4_board.get_center_pos(), 1, player_type_dic["max"], score=4)
+        self.circle_max_ball_0 = CircleBall(self.box_1_board.get_center_pos(), 1, player_type_dic["max"], score=1)
+        self.circle_max_ball_1 = CircleBall(self.box_4_board.get_center_pos(), 0, player_type_dic["max"], score=4)
 
         self.max_balls_list = [self.circle_max_ball_0, self.circle_max_ball_1]
         self.min_balls_list = [self.circle_min_ball_0, self.circle_min_ball_1]
@@ -447,6 +447,42 @@ class GameInterface:
                                     new_pos = [mouse_x + self.offset_x, mouse_y + self.offset_y]
                                     ball.move_ball(pos=new_pos)
 
+                    elif event.type == pg.MOUSEBUTTONDOWN:
+                            for ball in self.min_balls_list:
+                                if ball.is_colliding(event.pos):
+                                    ball.dragging = True
+                                    ball.previous_pos = ball.pos
+                                    mouse_x, mouse_y = event.pos
+                                    self.offset_x = ball.pos[0] - mouse_x
+                                    self.offset_y = ball.pos[1] - mouse_y
+
+                    elif event.type == pg.MOUSEBUTTONUP:
+                            if event.button == 1:
+                                for ball in self.min_balls_list:
+                                    if ball.dragging is True:
+                                        relocation = ball.update_to_new_board(self.board_list, self.min_balls_list, self.max_balls_list)
+
+                                        # If relocation was sucessfull send a message to the game manager
+                                        if relocation:
+                                            # Check for game ended
+                                            rospy.loginfo("Robot Turn = " + str(self.robot_turn))
+                                            rospy.loginfo("Child Turn = " + str(self.child_turn))
+                                            self.update_counters()
+                                            self.check_for_game_ended()
+                                            self.send_information_to_manager()
+                                        # Else the child needs to try again
+                                        else:
+                                            ball.move_ball(pos=ball.previous_pos)
+                                    ball.dragging = False
+
+                    elif event.type == pg.MOUSEMOTION:
+                        for ball in self.min_balls_list:
+                            if ball.is_colliding(event.pos):
+                                if ball.dragging:
+                                    mouse_x, mouse_y = event.pos
+                                    new_pos = [mouse_x + self.offset_x, mouse_y + self.offset_y]
+                                    ball.move_ball(pos=new_pos)
+
             # update counters
             self.update_counters()
 
@@ -522,8 +558,8 @@ class GameInterface:
         # pg.draw.rect (background, (0,0,0), self.box_2_rect, 2)
         # pg.draw.rect (background, (0,0,0), self.box_1_rect, 2)
         # pg.draw.rect (background, (0,0,0), self.max_score_rect, 2)
-        
-        
+
+
         # Draw the values
 
         # return the board
@@ -584,18 +620,3 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         gi.update_game()
         rate.sleep()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

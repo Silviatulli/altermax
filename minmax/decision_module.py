@@ -9,8 +9,6 @@ NODE_NAME = 'minmax_decision_module'
 
 """
 Module responsible for the Robot's decision
-
-
 """
 
 class DecisionManager:
@@ -142,6 +140,7 @@ class DecisionManager:
 
 
 
+
     def handle_robot_talk_service(self, req):
 
         # Read the request:
@@ -183,18 +182,3 @@ if __name__ == "__main__":
     dm = DecisionManager()
     rospy.loginfo("[Decision Manager] Node is running...")
     rospy.spin()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

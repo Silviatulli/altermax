@@ -9,8 +9,6 @@ NODE_NAME = 'minmax_planning_manager'
 
 """
 Module responsible for the Robot's planning
-
-
 """
 
 
@@ -347,18 +345,3 @@ if __name__ == "__main__":
     rospy.loginfo("[Planning Manager] Node is running...")
     pm = PlanningManager()
     rospy.spin()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
