@@ -30,3 +30,6 @@ Create a folder sdk that contains the pynaoqi sdk required and modify your bashr
 - export PYTHONPATH=$PYTHONPATH:~/sdk/pynaoqi-python2.7-2.1.2.17-linux64
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/<your_pc_name>/sdk/pynaoqi-python2.7-2.1.2.17-linux64
 
+you can download the pynaoqi sdk following this guide: http://wiki.ros.org/nao/Tutorials/Installation
+
+if you have any doubts please do not hesitate to contact me by e-mail
