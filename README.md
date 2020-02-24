@@ -8,14 +8,14 @@
 4) add the workspace to the ROS environment:
     $. ~/catkin_ws/devel/setup.bash
 5) Make sure that the CMakeLists.txt file is configured properly, with all the services and the dependencies listed as follows:
-    find_package(catkin REQUIRED COMPONENTS
+    - find_package(catkin REQUIRED COMPONENTS
       roscpp
       rospy
       std_msgs
       message_generation
       message_runtime
     )
-    add_service_files(
+    - add_service_files(
        FILES
        Decision.srv
        GameState.srv
@@ -26,6 +26,6 @@
 
 If you work with the NAO Robot uncomment the line 7, from 41 to 65 and 87 in the file robot_manager.py.
 Create a folder sdk that contains the pynaoqi sdk required and modify your bashrc ($gedit ~/.bashrc) to indicate the python and library path as following:
-# export PYTHONPATH=$PYTHONPATH:~/sdk/pynaoqi-python2.7-2.1.2.17-linux64
-# export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/<your_pc_name>/sdk/pynaoqi-python2.7-2.1.2.17-linux64
+- export PYTHONPATH=$PYTHONPATH:~/sdk/pynaoqi-python2.7-2.1.2.17-linux64
+- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/<your_pc_name>/sdk/pynaoqi-python2.7-2.1.2.17-linux64
 
