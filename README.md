@@ -15,7 +15,6 @@
       message_generation
       message_runtime
     )
-    ## Generate services in the 'srv' folder
     add_service_files(
        FILES
        Decision.srv
