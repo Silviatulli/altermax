@@ -3,6 +3,8 @@
 1) Install ROS melodic and catkin following this link: https://wiki.ros.org/catkin#Installing_catkin
 2) Clone the repository 
     - $ git clone https://github.com/Silviatulli/minmax.git 
+2) Remember to make the python files executable:
+    - $ chmod +x
 3) Build a catkin workspace and source the setup file run:
     - $ cd ~/catkin_ws
     - $ catkin_make
