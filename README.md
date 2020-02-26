@@ -27,7 +27,7 @@
        RobotTalk.srv
      )
 
-6) If you work with the NAO Robot uncomment the line 7, from 41 to 65 and 87 in the file robot_manager.py.
+6) If you work with the NAO Robot uncomment the line 7, from 41 to 65 and 85 (self.robot_communication.say(self.explanation_text)) in the file robot_manager.py.
 Create a folder sdk that contains the pynaoqi sdk required and modify your bashrc ($gedit ~/.bashrc) to indicate the python and library path as following:
 - export PYTHONPATH=$PYTHONPATH:~/sdk/pynaoqi-python2.7-2.1.2.17-linux64
 - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/<your_pc_name>/sdk/pynaoqi-python2.7-2.1.2.17-linux64
