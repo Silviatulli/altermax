@@ -82,7 +82,7 @@ class RobotManager:
         self.explanation_text = self.generate_explanation()
 
         # Send explanation text to the robot
-        #self.robot_communication.say(self.explanation_text)
+        self.robot_communication.say(self.explanation_text)
         print(self.explanation_text)
 
         # Clean explanation variables
