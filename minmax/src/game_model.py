@@ -145,7 +145,4 @@ if __name__ == "__main__":
         action, ball_id = valid_actions[valid_action_idx]
         state = state.make_action(action, ball_id)
 
-    for valid_action in valid_actions:
-        action, ball_id = valid_action
-        new_state = state.make_action(action, ball_id)
-        print(new_state, action)
+    print(state)
