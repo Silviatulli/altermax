@@ -2,18 +2,11 @@ from game_model import GameState
 
 class Node(GameState):
     def __init__(self, is_child_turn=None, balls=None):
-        if not is_child_turn:
+        if is_child_turn is None:
             super(Node, self).__init__()
         else:
             self.is_child_turn = is_child_turn
             self.balls = balls
-
-        #import pdb; pdb.set_trace()
-
-        if self.is_child_turn:
-            self.optimal_score = -1 # highest/lowest score that can be achieved by the current player - I would put this get_score
-        else:
-            self.optimal_score = +1
             
     def score(self):
         if not self.is_child_turn and self.isFinished():
