@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-#!/usr/bin/env python
 import pygame as pg
 import pygame.locals
 import numpy as np
