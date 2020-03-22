@@ -41,12 +41,7 @@ class View(object):
 
         self.surface.blit(text, (position_x, position_y))
 
-    def draw_balls(self, balls):
-        # TODO: Draw the balls in the respective square. Note that there may
-        # be two balls in a single square
-
-                
-                
+    def draw_balls(self, balls):  
         rectangles = {"min_score":[80, 270, 180, 180], "max_score":[1620, 270, 180, 180], "800":[360, 180, 180, 180],
             "400":[540, 180, 180, 180], "200":[360, 360, 180, 180], "100":[540, 360, 180, 180],
             "80":[780, 180, 180, 180], "40": [960, 180, 180, 180], "20":[780, 360, 180, 180],
@@ -67,26 +62,32 @@ class View(object):
         child_ball_two_idx = np.ravel_multi_index(child_ball_two, [2, 6])
 
         for square_idx in range(2*6):
-            is_robot_ball = False
-            is_child_ball = False
-            #font_color = (255, 255, 255)
-            #font = pg.font.SysFont("Roboto", 60)
+            is_robot_ball_one = False
+            is_robot_ball_two = False
+            is_child_ball_one = False
+            is_child_ball_two = False
+            font = pg.font.SysFont("Roboto", 40)
 
-            if (robot_ball_one_idx == square_idx
-                    or robot_ball_two_idx == square_idx):
-                is_robot_ball = True
+            if (robot_ball_one_idx == square_idx):
+                is_robot_ball_one = True
+            if (robot_ball_two_idx == square_idx):
+                is_robot_ball_two = True
 
-            if (child_ball_one_idx == square_idx
-                    or child_ball_two_idx == square_idx):
-                is_child_ball = True
+            if (child_ball_one_idx == square_idx):
+                is_child_ball_one = True
+            if (child_ball_two_idx == square_idx):
+                is_child_ball_two = True
 
+            is_robot_ball = is_robot_ball_one or is_robot_ball_two
+            is_child_ball = is_child_ball_one or is_child_ball_two
+            
             if is_robot_ball and is_child_ball:
                 robot_color = (83, 109, 254)
                 child_color = (211, 47, 47)
                 radius = 30
 
                 square_position = np.unravel_index(square_idx, [2, 6])
-                rect = rectangles[rectangle_lookup[square_position[0]][square_position[1]]]
+                rect = rectangles[rectangle_lookup[square_position[0]][square_position[1]]] #pixel position
 
                 robot_position_x = rect[0] + int(0.30*rect[2])
                 robot_position_y = rect[1] + int(0.30*rect[3])
@@ -94,7 +95,20 @@ class View(object):
                 child_position_y = rect[1] + int(0.70*rect[3])
 
                 pg.draw.circle(self.surface, robot_color, (robot_position_x, robot_position_y), radius)
+                if is_robot_ball_one:
+                    text = font.render('A', True, (255, 255, 255))
+                    self.surface.blit(text, (robot_position_x, robot_position_y))
+                elif is_robot_ball_two: 
+                    text = font.render('B', True, (255, 255, 255))
+                    self.surface.blit(text, (robot_position_x-10, robot_position_y-10))
+
                 pg.draw.circle(self.surface, child_color, (child_position_x, child_position_y), radius)
+                if is_child_ball_one:
+                    text = font.render('A', True, (255, 255, 255))
+                    self.surface.blit(text, (child_position_x-10, child_position_y-10))
+                elif is_child_ball_two: 
+                    text = font.render('B', True, (255, 255, 255))
+                    self.surface.blit(text, (child_position_x-10, child_position_y-10))
 
             elif is_robot_ball:
                 robot_color = (83, 109, 254)
@@ -102,11 +116,18 @@ class View(object):
 
                 square_position = np.unravel_index(square_idx, [2, 6])
                 rect = rectangles[rectangle_lookup[square_position[0]][square_position[1]]]
+
                 position_x = rect[0] + int(0.5*rect[2])
                 position_y = rect[1] + int(0.5*rect[3])
                 
                 pg.draw.circle(self.surface, robot_color, (position_x, position_y), radius)
-            
+                if is_robot_ball_one:
+                    text = font.render('A', True, (255, 255, 255))
+                    self.surface.blit(text, (position_x-10, position_y-10))
+                elif is_robot_ball_two: 
+                    text = font.render('B', True, (255, 255, 255))
+                    self.surface.blit(text, (position_x-10, position_y-10))
+
             elif is_child_ball:
                 child_color = (211, 47, 47)
                 radius = 30
@@ -117,30 +138,32 @@ class View(object):
                 position_y = rect[1] + int(0.5*rect[3])
                 
                 pg.draw.circle(self.surface, child_color, (position_x, position_y), radius)
-            
-           
+                if is_child_ball_one:
+                    text = font.render('A', True, (255, 255, 255))
+                    self.surface.blit(text, (position_x-10, position_y-10))
+                elif is_child_ball_two: 
+                    text = font.render('B', True, (255, 255, 255))
+                    self.surface.blit(text, (position_x-10, position_y-10))
 
+    def draw_outcome(self, is_child_turn, is_finished):
+        font = pg.font.SysFont("Roboto", 85)
+        position_x = 800
+        position_y = 700
+
+        if not is_child_turn and is_finished:
+            text = font.render('Child Wins', True, (0, 0, 0))
+            self.surface.blit(text, (position_x, position_y))
+        elif is_child_turn and is_finished:
+            text = font.render('Robot Wins', True, (0, 0, 0))
+            self.surface.blit(text, (position_x, position_y))
 
     def update(self, game_state):
         self.draw_empty_board()
         self.draw_score('robot', game_state.get_score('robot'))
         self.draw_score('child', game_state.get_score('child'))
+        self.draw_outcome(game_state.is_child_turn, game_state.isFinished())
         self.draw_balls(game_state.balls)
-
-        # TODO: update the pygame visualizazion
-        # # If the game has ended and the child wins:
-        # if self.finished_game and self.child_win:
-
-        #     self.child_win_board.draw(self.background)
-
-        #     #self.play_again_board.draw(self.background)
-
-        # elif self.finished_game and not self.child_win:
-
-        #     self.robot_win_board.draw(self.background)
-
         pg.display.update()
-        return
 
 
 if __name__ == "__main__":
@@ -151,7 +174,7 @@ if __name__ == "__main__":
 
     while not state.isFinished():
         game.update(state)
-        time.sleep(0.5)
+        time.sleep(0.25)
 
         valid_actions = state.valid_actions()
         valid_action_idx = np.random.randint(len(valid_actions))
@@ -159,3 +182,4 @@ if __name__ == "__main__":
         state = state.make_action(action, ball_id)
 
     game.update(state)
+    time.sleep(1.5)
