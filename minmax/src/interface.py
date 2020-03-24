@@ -3,6 +3,7 @@ import pygame as pg
 import pygame.locals
 import numpy as np
 
+
 class View(object):
     def __init__(self):
         pg.init()
@@ -97,7 +98,7 @@ class View(object):
                 pg.draw.circle(self.surface, robot_color, (robot_position_x, robot_position_y), radius)
                 if is_robot_ball_one:
                     text = font.render('A', True, (255, 255, 255))
-                    self.surface.blit(text, (robot_position_x, robot_position_y))
+                    self.surface.blit(text, (robot_position_x-10, robot_position_y-10))
                 elif is_robot_ball_two: 
                     text = font.render('B', True, (255, 255, 255))
                     self.surface.blit(text, (robot_position_x-10, robot_position_y-10))
@@ -170,10 +171,10 @@ if __name__ == "__main__":
     from game_model import GameState
     import time
     state = GameState()
-    game = View()
+    visualization = View()
 
     while not state.isFinished():
-        game.update(state)
+        visualization.update(state)
         time.sleep(0.25)
 
         valid_actions = state.valid_actions()
@@ -181,5 +182,5 @@ if __name__ == "__main__":
         action, ball_id = valid_actions[valid_action_idx]
         state = state.make_action(action, ball_id)
 
-    game.update(state)
+    visualization.update(state)
     time.sleep(1.5)
