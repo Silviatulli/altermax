@@ -17,7 +17,6 @@ class Node(GameState):
             return 0
     
     def children(self):
-        # [Node(), ..., Node()]
         nodes = list()
 
         #populate tree
@@ -48,8 +47,18 @@ def minimax(node, depth):
             value = min(value, minimax(child, depth - 1))
         return value
 
+def V(state):
+    node = Node(is_child_turn=state.is_child_turn, balls=state.balls)
+    value = minimax(node, 3)
+    return value
 
+def Q(state, action):
+    action, ball_id = action
+    new_state = state.make_action(action, ball_id)
+    q_value = V(new_state)
+    return q_value
+    
 if __name__ == "__main__":
     node = Node()
-    value = minimax(node, 10)
+    value = minimax(node, 3)
     print(value)
