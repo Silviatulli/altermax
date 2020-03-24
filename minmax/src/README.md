@@ -1,5 +1,5 @@
 # Code Refactoring of Minicomputer Tug of War
-Two agents (child and robot) play the game using a Minmax algorithm. The robot builds its belief about the child's knowledge level and generate an explanation (explanation, hint, no-explanation).
+Two agents (child and robot) play the game using a Minmax algorithm. The robot builds its belief about the child's knowledge level and generate an explanation.
 
 ## File-by-File Details
 
