@@ -1,41 +1,32 @@
-#ROS config
+# Code Refactoring of Minicomputer Tug of War
+Two agents (child and robot) play the game using a Minmax algorithm. The robot builds its belief about the child's knowledge level and generate an explanation.
 
-1) Install ROS melodic and catkin following this link: https://wiki.ros.org/catkin#Installing_catkin
-2) Clone the repository 
-    - $ git clone https://github.com/Silviatulli/minmax.git 
-2) Remember to make the python files executable by running the following command for each script:
-    - $ chmod +x filename.py
-3) Build a catkin workspace and source the setup file run:
-    - $ cd ~/catkin_ws
-    - $ catkin_make
-4) add the workspace to the ROS environment:
-    - $. ~/catkin_ws/devel/setup.bash
-5) Make sure that the CMakeLists.txt file is configured properly, with all the services and the dependencies listed as follows:
-    - find_package(catkin REQUIRED COMPONENTS
-      roscpp
-      rospy
-      std_msgs
-      message_generation
-      message_runtime
-    )
-    - add_service_files(
-       FILES
-       Decision.srv
-       GameState.srv
-       Plan.srv
-       RobotExplanation.srv
-       RobotTalk.srv
-     )
+## File-by-File Details
 
-6) If you work with the NAO Robot uncomment the line 7, from 41 to 65 and 85 (self.robot_communication.say(self.explanation_text)) in the file robot_manager.py.
-Create a folder sdk that contains the pynaoqi sdk required and modify your bashrc ($gedit ~/.bashrc) to indicate the python and library path as following:
-- export PYTHONPATH=$PYTHONPATH:~/sdk/pynaoqi-python2.7-2.1.2.17-linux64
-- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/<your_pc_name>/sdk/pynaoqi-python2.7-2.1.2.17-linux64
+- **game_model.py**;
+the controls and the model of the game 
+  - returns game states (balls position and score) and game actions
+  - checks if the action is valid and if the game is finished
+  - performs a valid action
 
-7) you can download the pynaoqi sdk following this guide: http://wiki.ros.org/nao/Tutorials/Installation
+- **minmax.py**;
+standard implementation of minmax algorithm. The reference implementation is that one from [wikipedia](https://en.wikipedia.org/wiki/Minimax#Pseudocode)
+  - returns a minimax tree (search-depth of 3), v(s), q-value
+  
+- **interface.py**;
+view of the game
+  - draw the board, the score, the balls, the outcome
+  - update the game view
 
-8) Launch the code: 
-- open a terminal and launch: $ roscore
-- open a second terminal into your repository folder and launch minmax.launch: $ roslaunch minmax.launch
-
-if you have any doubts please do not hesitate to contact me by e-mail
+- **robot_decision.py**;
+controls the robot decision-making
+  - returns the best actions, the POMDP, an explanation
+  
+- **game_manager.py**;
+links the view, the game model and the robot decision
+  - plays the game
+  - returns the child outcome and number of actions
+  
+- **robot_manager.py**;
+controls the physical robot
+  - speech, animations, facetracking
