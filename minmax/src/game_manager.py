@@ -4,6 +4,7 @@ from game_model import GameState
 from minmax import Q
 from interface import View
 from robot_decision import Robot
+#from robot_manager import RobotManager
 import time
 
 
@@ -37,8 +38,7 @@ def play_game(robot):
 
         else:
             action, ball_id = robot.policy(state)
-            explanation = robot.generate_explanation((action, ball_id), state)
-            print(explanation)
+            robot.give_explanation((action, ball_id), state)
 
             #random_action
             #worst_action
@@ -60,6 +60,7 @@ def play_game(robot):
 if __name__ == "__main__":
     number_of_games = 3
     robot = Robot()
+    # robot = RobotManager()
 
     for game in range(number_of_games):
         outcome, num_actions = play_game(robot)

@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -- coding: utf-8 --
 from naoqi import ALProxy, ALBroker, ALModule
+from robot_decision import Robot
 
 
 pt_action_dic = {'up': "cima", 'down':"baixo", 'left':"a esquerda", 'right':"a direita", 'up_left':"cima e esquerda", 'up_right':"cima e direita",
                  'down_left':"baixo e esquerda", 'down_right':"baixo e direita"}
 
 
-class RobotManager:
+class RobotManager(Robot):
 
     def __init__(self):
+        super(RobotManager, self).__init__()
         #Robot Connection Variables and Services
         self.nao_IP = '192.168.1.100'
         self.nao_port = 9559
@@ -46,10 +48,10 @@ class RobotManager:
             self.ledProxy.createGroup("turn", section1)
             self.ledProxy.fadeRGB("turn", 0x00000000, 0.3)
 
-    def handle_explanation(self, explanation):
+    def give_explanation(self, action, state):
+        explanation = super(RobotManager, self).give_explanation(action, state)
         # Send explanation text to the robot
         self.robot_communication.say(explanation)
-        print(explanation)
 
     # def generate_explanation(self):
 
