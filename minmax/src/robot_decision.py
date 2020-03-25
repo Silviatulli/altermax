@@ -35,6 +35,7 @@ class Robot(object):
 
     def generate_explanation(self, action, state):
         #given the current state of the child makes the robot selects an action/explanation
+        #count number of turns
         return 'this is a random explanation'
 
 
