@@ -29,4 +29,4 @@ links the view, the game model and the robot decision
   
 - **robot_manager.py**;
 controls the physical robot
-- speech, animations, facetracking
+  - speech, animations, facetracking
