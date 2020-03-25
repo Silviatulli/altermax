@@ -2,18 +2,11 @@ from game_model import GameState
 
 class Node(GameState):
     def __init__(self, is_child_turn=None, balls=None):
-        if not is_child_turn:
+        if is_child_turn is None:
             super(Node, self).__init__()
         else:
             self.is_child_turn = is_child_turn
             self.balls = balls
-
-        #import pdb; pdb.set_trace()
-
-        if self.is_child_turn:
-            self.optimal_score = -1 # highest/lowest score that can be achieved by the current player - I would put this get_score
-        else:
-            self.optimal_score = +1
             
     def score(self):
         if not self.is_child_turn and self.isFinished():
@@ -24,7 +17,6 @@ class Node(GameState):
             return 0
     
     def children(self):
-        # [Node(), ..., Node()]
         nodes = list()
 
         #populate tree
@@ -55,8 +47,18 @@ def minimax(node, depth):
             value = min(value, minimax(child, depth - 1))
         return value
 
+def V(state):
+    node = Node(is_child_turn=state.is_child_turn, balls=state.balls)
+    value = minimax(node, 3)
+    return value
 
+def Q(state, action):
+    action, ball_id = action
+    new_state = state.make_action(action, ball_id)
+    q_value = V(new_state)
+    return q_value
+    
 if __name__ == "__main__":
     node = Node()
-    value = minimax(node, 10)
+    value = minimax(node, 3)
     print(value)
