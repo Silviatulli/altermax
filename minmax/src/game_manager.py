@@ -14,7 +14,7 @@ def play_game(robot):
 
     while not state.isFinished():
         visualization.update(state)
-        time.sleep(0.5)
+        #time.sleep(0.5)
         
         valid_actions = state.valid_actions()
 
