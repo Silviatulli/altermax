@@ -23,6 +23,10 @@ controls the robot decision-making
   - returns the best actions, the POMDP, an explanation
   
 - **game_manager.py**;
-link the view, the game model and the robot decision
+links the view, the game model and the robot decision
   - plays the game
   - returns the child outcome and number of actions
+  
+- **robot_manager.py**;
+controls the physical robot
+  - speech, animations, facetracking
