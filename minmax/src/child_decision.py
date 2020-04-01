@@ -14,7 +14,12 @@ class Child(object):
     #      ability to update the child
     #      perform an action
 
+    def __init__(self):
+        num_states = (12 * 11)^2 * 2
+        self.q_table = np.zeros(num_states, 10)
+
     def policy(self, state):
+
         valid_actions = state.valid_actions()
         best_action = valid_actions[0]
         max_value = Q(state, best_action)
@@ -38,8 +43,3 @@ class Child(object):
         else:
             reward = -1
         return
-
-        
-
-if __name__ == "__main__":
-    pass
