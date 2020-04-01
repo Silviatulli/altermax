@@ -122,16 +122,62 @@ class GameState(object):
 
         return str(values)
 
-# cartesian product of all the dimensions your state is comprised of
-# states are all possible combination of ball position that are valid
-# 12 states for the first ball of the robot
-# 11 states for the second ball of the robot
-# 12 states for the first ball of the child
-# 11 states for the second ball of the child
-# number of states = (12*11)^2*2
-# actions = 10
-# gamma = 0.99 #because we have a deterministic environment
-# reward = scores
+    @staticmethod
+    def get_action_id(action, ball_id):
+        action_id = {
+                     ('left', 0): 0,
+                     ('left', 1): 1,
+                     ('right', 0): 2,
+                     ('right', 1): 3,
+                     ('up', 0): 4,
+                     ('up', 1): 5,
+                     ('down', 0): 6,
+                     ('down', 1): 7,
+                     ('up_left', 0): 8,
+                     ('up_left', 1): 9,
+                     ('down_left', 0): 10,
+                     ('down_left', 1): 11,
+                     ('up_right', 0): 12,
+                     ('up_right', 1): 13,
+                     ('down_right', 0): 14,
+                     ('down_right', 1): 15
+                    }
+        return action_id[(action,ball_id)]
+
+    @staticmethod
+    def get_state_id(state):
+        # convert the state to array index
+        robot_ball1 = state.balls['robot'][0]
+        robot_ball2 = state.balls['robot'][1]
+        child_ball1 = state.balls['child'][0]
+        child_ball2 = state.balls['child'][1]
+        turn = state.is_child_turn
+
+        robot_ball1_idx = np.ravel_multi_index(robot_ball1, [2,6])
+        robot_ball2_idx = np.ravel_multi_index(robot_ball1, [2,6])
+        child_ball1_idx = np.ravel_multi_index(child_ball1, [2,6])
+        child_ball2_idx = np.ravel_multi_index(child_ball2, [2,6])
+        turn_idx = 1 if turn else 0
+        
+        multi_idx = [
+                     robot_ball1_idx,
+                     robot_ball2_idx,
+                     child_ball1_idx,
+                     child_ball2_idx,
+                     turn_idx
+                    ]
+        
+        #convert the array index to integer number
+        array_shape = (12,12,12,12,2)
+        state_idx = np.ravel_multi_index(multi_idx, array_shape)
+
+        return state_idx
+
+    def get_winner(self):
+        #TODO: refactor when time
+        pass
+
+
 
 
 if __name__ == "__main__":
