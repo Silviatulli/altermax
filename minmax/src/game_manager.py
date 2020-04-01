@@ -34,7 +34,7 @@ def play_game(robot,child):
 
         old_state = state
         state = state.make_action(action, ball_id)
-        child.update(old_state, action, state)
+        child.update(old_state, (action, ball_id), state)
 
     visualization.update(state)
     time.sleep(1.5)
