@@ -1,5 +1,5 @@
-# Code Refactoring of Minicomputer Tug of War
-Two agents (child and robot) play the game using a Minmax algorithm. The robot builds its belief about the child's knowledge level and generate an explanation.
+## Demo Simulator
+run: python3 game_mananger.py
 
 ## File-by-File Details
 
@@ -19,8 +19,12 @@ view of the game
   - update the game view
 
 - **robot_decision.py**;
-controls the robot decision-making
+controls the robot decision-making (minmax search tree)
   - returns the best actions, the POMDP, an explanation
+
+- **child_decision.py**;
+controls the child decision-making (q-learning)
+  - represent q table, update child, perform an action
   
 - **game_manager.py**;
 links the view, the game model and the robot decision
