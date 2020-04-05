@@ -3,14 +3,7 @@ from game_model import GameState
 
 
 
-class Child(object):
-    #TODO: 
-    #      Representation of relevant data:
-    #      q table
-    #
-    #      Things your code needs to be able to do:(features)
-    #      ability to update the child
-    #      perform an action
+class ChildQlearning(object):
 
     def __init__(self):
         num_states = (12 * 12)**2 * 2
@@ -47,8 +40,6 @@ class Child(object):
             reward = 1
         else:
             reward = -1
-
-        # import pdb; pdb.set_trace()
 
         # update q-table
         new_state_idx = GameState.get_state_id(new_state)
