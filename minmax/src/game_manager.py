@@ -43,9 +43,6 @@ def play_game(robot,child):
         outcome = 'Failure'
     elif not state.is_child_turn and state.isFinished():
         outcome = 'Success'
-    
-    print(outcome)
-    print(num_actions)
 
     return outcome, num_actions
 

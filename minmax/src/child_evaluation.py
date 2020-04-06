@@ -1,3 +1,14 @@
+# relative - comparing two policies - performance estimate of the child model
+# import the modules: child decision and robot decision
+# define a policy (q-learning)
+# define optimal policy performance (performance metrics)
+# compare number of win percentage for a x episodes (roll out policies - compute the accumulated rewards - minmax child vs qlearning child)
+# in this way we have a baseline for the number of games we need to play
+# define train steps: set the number of episodes (how many times you want the child plays the game)
+# play the game x times
+# save the q values
+# check how many times the q values are updated
+
 from child_minmax import ChildMinmax
 from child_qlearning import ChildQlearning
 from robot_decision import Robot
@@ -39,13 +50,13 @@ def play_game(robot, child, isTraining=True):
 
     return outcome, num_actions
 
+#keyword argument - optional or extra arguments 
 def train(robot, child, num_episodes=1):
     for episode in tqdm(range(num_episodes)):
         outcome, num_actions = play_game(robot,child)
 
 def evaluate(robot, child):
-
-    num_episodes = 500 #episodes
+    num_episodes = 50 #episodes
     win = 0
     for episode in tqdm(range(num_episodes)):
         outcome, num_actions = play_game(robot,
@@ -66,7 +77,7 @@ if __name__ == "__main__":
     robot = Robot()
     child = ChildQlearning()
     minimaxChild = ChildMinmax()
-    episodes_between_evaluations = 10
+    episodes_between_evaluations = 100
 
     threshold = evaluate(robot, minimaxChild)
     print("MinimaxChild performance: {0}".format(threshold))

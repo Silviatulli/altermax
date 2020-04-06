@@ -52,7 +52,7 @@ class ChildQlearning(object):
         action_id = GameState.get_action_id(action_name, ball_id)
         
         self.q_table[state_id, action_id] = q_value
-        print(q_value)
+        
         
         return
 
