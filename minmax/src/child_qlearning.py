@@ -2,9 +2,7 @@ import numpy as np
 from game_model import GameState
 
 
-
 class ChildQlearning(object):
-
     def __init__(self):
         num_states = (12 * 12)**2 * 2
         self.q_table = np.zeros((num_states, 16))
@@ -14,7 +12,7 @@ class ChildQlearning(object):
         action_id = GameState.get_action_id(action_name, ball_id)
         state_id = GameState.get_state_id(state)
         q_value = self.q_table[state_id, action_id]
-    
+
         return q_value
 
     def policy(self, state):
@@ -33,7 +31,7 @@ class ChildQlearning(object):
 
         idx = np.random.randint(len(best_actions))
         return best_actions[idx]
-    
+
     def update(self, state, action, new_state):
         # reward function
         if state.get_score('child') < new_state.get_score('child'):
@@ -45,14 +43,12 @@ class ChildQlearning(object):
         new_state_idx = GameState.get_state_id(new_state)
         alpha = 0.8
         gamma = 0.99
-        q_value = (1-alpha)*self.Q(state,action) + alpha * (reward + gamma * np.max(self.q_table[new_state_idx, :]))
-        
+        V_star = np.max(self.q_table[new_state_idx, :])
+        q_sa = self.Q(state, action)
+        q_value = (1-alpha)*q_sa + alpha * (reward + gamma * V_star)
+
         state_id = GameState.get_state_id(state)
         action_name, ball_id = action
         action_id = GameState.get_action_id(action_name, ball_id)
-        
-        self.q_table[state_id, action_id] = q_value
-        print(q_value)
-        
-        return
 
+        self.q_table[state_id, action_id] = q_value
