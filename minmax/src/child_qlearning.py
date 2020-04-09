@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from game_model import GameState
 
 
@@ -21,6 +22,7 @@ class ChildQlearning(object):
         valid_actions = state.valid_actions()
         best_action = valid_actions[0]
         max_value = self.Q(state, best_action)
+        epsilon = 0.15
         for action in valid_actions:
             if max_value < self.Q(state, action):
                 max_value = self.Q(state, action)
@@ -28,11 +30,18 @@ class ChildQlearning(object):
 
         best_actions = list()
         for action in valid_actions:
-            if max_value == self.Q(state, action):
+            if max_value == self.Q(state, action): 
                 best_actions.append(action)
 
-        idx = np.random.randint(len(best_actions))
-        return best_actions[idx]
+        # choose the best action
+        if np.random.rand() <= epsilon:
+            idx = np.random.randint(len(valid_actions))
+            action = valid_actions[idx]
+        else:
+            idx = np.random.randint(len(best_actions))
+            action = best_actions[idx]
+
+        return action
     
     def update(self, state, action, new_state):
         # reward function

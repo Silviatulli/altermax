@@ -15,7 +15,8 @@ from robot_decision import Robot
 from game_model import GameState
 from tqdm import tqdm
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib 
+import matplotlib.style 
 
 
 #TODO create child_minmax option
