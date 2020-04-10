@@ -34,10 +34,21 @@ class Robot(object):
         return 
 
     def give_explanation(self, action, state):
-        #given the current state of the child makes the robot selects an action/explanation
-        #count number of turns
-        explanation = 'this is a random explanation'
-        return explanation
+
+        # given the current state of the child makes the robot selects an action/explanation
+        # count number of turns
+
+        # TODO: transform the explanation into a demonstration
+        # consider state, action and reward
+        
+        # reward function
+        new_state = state.make_action(action[0], action[1])
+        if state.get_score('child') < new_state.get_score('child'):
+            reward = 1
+        else:
+            reward = -1
+
+        return (state, action, reward, new_state)
 
 
 if __name__ == "__main__":

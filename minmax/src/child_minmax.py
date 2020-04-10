@@ -26,6 +26,9 @@ class ChildMinmax(object):
     def update(self, state, action, new_state):
         return
 
+    def explanation_update(self, state, action, reward, new_state):
+        return
+
 if __name__ == "__main__":
     pass
  

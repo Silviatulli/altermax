@@ -36,7 +36,15 @@ def play_game(robot, child, isTraining=True):
 
         else:
             action, ball_id = robot.policy(state)
-            robot.give_explanation((action, ball_id), state)
+            (explanation_state,
+             explanation_action,
+             explanation_reward,
+             explanaton_new_state) = robot.give_explanation((action, ball_id), 
+                                                             state)
+            child.explanation_update(explanation_state,
+                                     explanation_action,
+                                     explanation_reward,
+                                     explanaton_new_state)
 
 
         old_state = state

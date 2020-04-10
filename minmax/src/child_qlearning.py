@@ -3,7 +3,6 @@ import random
 from game_model import GameState
 
 
-
 class ChildQlearning(object):
 
     def __init__(self):
@@ -65,3 +64,22 @@ class ChildQlearning(object):
         
         return
 
+    def explanation_update(self, state, action, reward, new_state):
+
+        # TODO: update the q-table when the robot makes an action
+        # import robot decision
+        # retrieve robot state, action and reward
+        # translate the robot state, action and reward in useful information (q values)
+        # update q-table
+        
+        new_state_idx = GameState.get_state_id(new_state)
+        alpha = 0.8
+        gamma = 0.99
+        q_value = (1-alpha)*self.Q(state,action) + alpha * (reward + gamma * np.max(self.q_table[new_state_idx, :]))
+        
+        state_id = GameState.get_state_id(state)
+        action_name, ball_id = action
+        action_id = GameState.get_action_id(action_name, ball_id)
+        
+        self.q_table[state_id, action_id] = q_value
+        return
