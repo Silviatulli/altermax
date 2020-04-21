@@ -30,6 +30,8 @@ controls the child decision-making (minmax)
 
 - **child_qlearning.py**;
 controls the child decision-making (qlearning)
+  - updates the q table when the child win or lose the game
+  - updates the q table based on the robot state, action and reward (explanation update)
 
 - **child_evaluation.py**;
 evaluates the child performance
