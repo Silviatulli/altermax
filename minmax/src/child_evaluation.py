@@ -15,7 +15,7 @@ from robot_decision import Robot
 from game_model import GameState
 from tqdm import tqdm
 import numpy as np
-import matplotlib 
+import matplotlib.pyplot as plt
 import matplotlib.style 
 
 
@@ -36,33 +36,40 @@ def play_game(robot, child, isTraining=True):
 
         else:
             action, ball_id = robot.policy(state)
-            (explanation_state,
-             explanation_action,
-             explanation_reward,
-             explanaton_new_state) = robot.give_explanation((action, ball_id), 
-                                                             state)
-            child.explanation_update(explanation_state,
-                                     explanation_action,
-                                     explanation_reward,
-                                     explanaton_new_state)
+
+            (demonstration_state,
+             demonstration_action,
+             demonstration_reward,
+             demonstration_new_state) = robot.give_demonstration((action, ball_id), 
+                                                           state)
+            child.demonstration_update(demonstration_state,
+                                     demonstration_action,
+                                     demonstration_reward,
+                                     demonstration_new_state)
+            
+            # (examples) = robot.give_explanation()
+            # child.explanation_update(examples)
 
 
         old_state = state
         state = state.make_action(action, ball_id)
         if isTraining:
             child.update(old_state, (action, ball_id), state)
-
+    
     if state.is_child_turn and state.isFinished():
         outcome = -1
     elif not state.is_child_turn and state.isFinished():
         outcome = 1
-
+ 
     return outcome, num_actions
+
 
 #keyword argument - optional or extra arguments 
 def train(robot, child, num_episodes=1):
     for episode in tqdm(range(num_episodes)):
         outcome, num_actions = play_game(robot,child)
+        print(outcome)
+
 
 def evaluate(robot, child):
     num_episodes = 50 #episodes
@@ -74,12 +81,13 @@ def evaluate(robot, child):
         if outcome == 1:
             win += 1
     win_rate_child = win * 1.0/num_episodes
-
     return win_rate_child
 
 #TODO:
 # print rewards for child_minmax and child_qlearning
 # plot rewards per time steps
+
+
 
 
 if __name__ == "__main__":
@@ -93,6 +101,7 @@ if __name__ == "__main__":
 
     games_played = 0
     win_rate_child = evaluate(robot, child)
+
     while win_rate_child < threshold or games_played < 1000:
         train(robot, child, num_episodes=episodes_between_evaluations)
         games_played += episodes_between_evaluations
@@ -101,6 +110,7 @@ if __name__ == "__main__":
 
     msg = "QLearning needs {0} episodes to be as good as the minimax."
     print(msg.format(games_played))
+
 
     # for game in range(number_of_games):
     #     outcome, num_actions = play_game(robot,child_qlearning)
