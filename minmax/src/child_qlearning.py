@@ -64,8 +64,7 @@ class ChildQlearning(object):
         
         return
 
-    def explanation_update(self, state, action, reward, new_state):
-
+    def demonstration_update(self, state, action, reward, new_state):
         # TODO: update the q-table when the robot makes an action
         # import robot decision
         # retrieve robot state, action and reward
@@ -83,3 +82,8 @@ class ChildQlearning(object):
         
         self.q_table[state_id, action_id] = q_value
         return
+
+    # def explanation_update(self, examples):
+    #     return
+    
+
