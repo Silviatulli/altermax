@@ -68,7 +68,7 @@ def play_game(robot, child, isTraining=True):
 def train(robot, child, num_episodes=1):
     for episode in tqdm(range(num_episodes)):
         outcome, num_actions = play_game(robot,child)
-        print(outcome)
+        #print(outcome)
 
 
 def evaluate(robot, child):
