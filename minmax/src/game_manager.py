@@ -27,7 +27,7 @@ def play_game(robot,child):
 
         else:
             action, ball_id = robot.policy(state)
-            robot.give_explanation((action, ball_id), state)
+            robot.give_demonstration((action, ball_id), state)
 
             #random_action
             #worst_action
