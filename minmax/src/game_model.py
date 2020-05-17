@@ -154,7 +154,7 @@ class GameState(object):
         turn = state.is_child_turn
 
         robot_ball1_idx = np.ravel_multi_index(robot_ball1, [2,6])
-        robot_ball2_idx = np.ravel_multi_index(robot_ball1, [2,6])
+        robot_ball2_idx = np.ravel_multi_index(robot_ball2, [2,6])
         child_ball1_idx = np.ravel_multi_index(child_ball1, [2,6])
         child_ball2_idx = np.ravel_multi_index(child_ball2, [2,6])
         turn_idx = 1 if turn else 0
@@ -173,11 +173,38 @@ class GameState(object):
 
         return state_idx
 
+    @staticmethod
+    def get_state(state_idx):
+        # array_range = 12*12*12*12*2
+        array_shape = (12,12,12,12,2)
+        multi_idx = np.unravel_index(state_idx, array_shape)
+        
+        (robot_ball1_idx, 
+         robot_ball2_idx,
+         child_ball1_idx,
+         child_ball2_idx,
+         turn_idx
+        ) = multi_idx
+        
+        turn = True if turn_idx == 1 else False
+        robot_ball1 = np.unravel_index(robot_ball1_idx, [2,6])
+        robot_ball2 = np.unravel_index(robot_ball2_idx, [2,6])
+        child_ball1 = np.unravel_index(child_ball1_idx, [2,6])
+        child_ball2 = np.unravel_index(child_ball2_idx, [2,6])
+        
+        state = GameState()
+        # convert the state to array index
+        state.balls['robot'][0] = robot_ball1
+        state.balls['robot'][1] = robot_ball2
+        state.balls['child'][0] = child_ball1
+        state.balls['child'][1] = child_ball2 
+        state.is_child_turn = turn
+
+        return state
+
     def get_winner(self):
         #TODO: refactor when time
         pass
-
-
 
 
 if __name__ == "__main__":
