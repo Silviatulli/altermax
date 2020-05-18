@@ -20,7 +20,7 @@ view of the game
 
 - **robot_decision.py**;
 controls the robot decision-making (minmax search tree)
-  - returns the best actions, the POMDP, an explanation
+  - returns the best actions, the POMDP, a demonstration and an explanation (in the form of examples)
 
 - **child_decision.py**;
 controls the child decision-making
@@ -32,6 +32,7 @@ controls the child decision-making (minmax)
 controls the child decision-making (qlearning)
   - updates the q table when the child win or lose the game
   - updates the q table based on the robot state, action and reward (explanation update)
+  - updates the q table based on a set of robot examples
 
 - **child_evaluation.py**;
 evaluates the child performance
