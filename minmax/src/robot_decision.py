@@ -12,6 +12,7 @@ class Robot(object):
         #given the current state of the game makes the robot selects an action in the game
         valid_actions = state.valid_actions()
         best_action = valid_actions[0]
+
         max_value = Q(state, best_action)
         for action in valid_actions:
             if max_value < Q(state, action):
@@ -49,35 +50,35 @@ class Robot(object):
 
         return (state, action, reward, new_state)
     
-    # def give_explanation(self):
-    #     array_shape = 12*12*12*12*2 
+    def give_explanation(self):
+        array_shape = 12*12*12*12*2 
 
-    #     robot_states_idx = []
-    #     num_examples = 10
-    #     while len(robot_states_idx) < num_examples:
-    #         states_idx = np.random.randint(low=1, high=array_shape, size=10)
-    #         for state_idx in states_idx:
-    #             state = GameState.get_state(state_idx)
-    #             if state.is_child_turn == False and state.isValid():
-    #                 robot_states_idx.append(state_idx)
+        valid_states = []
+        num_examples = 10
+        while len(valid_states) < num_examples:
+            candidate_states = np.random.randint(low=1, high=array_shape, size=10)
+            for state_idx in candidate_states:
+                state = GameState.get_state(state_idx)                
+                if state.is_child_turn == False and state.isValid() and not state.isFinished():
+                    valid_states.append(state_idx)
     
-    #     robot_states_idx = robot_states_idx[:num_examples]
+        valid_states = valid_states[:num_examples]
         
-    #     examples = []
-    #     for robot_state_idx in robot_states_idx:
-    #         robot_state = GameState.get_state(robot_state_idx)
-    #         best_action = self.policy(robot_state)
-    #         new_state = state.make_action(best_action[0], best_action[1])
+        examples = []
+        for robot_state_idx in valid_states:
+            robot_state = GameState.get_state(robot_state_idx)
+            best_action = self.policy(robot_state)
+            new_state = robot_state.make_action(best_action[0], best_action[1])
 
-    #         if robot_state.get_score('child') < new_state.get_score('child'):
-    #             reward = 1
-    #         else:
-    #             reward = -1
+            if robot_state.get_score('child') < new_state.get_score('child'):
+                reward = 1
+            else:
+                reward = -1
             
-    #         example = (robot_state, best_action, reward, new_state)
-    #         examples.append(example)
+            example = (robot_state, best_action, reward, new_state)
+            examples.append(example)
 
-    #     return examples
+        return examples
 
 if __name__ == "__main__":
     pass

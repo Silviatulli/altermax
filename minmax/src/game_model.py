@@ -194,10 +194,10 @@ class GameState(object):
         
         state = GameState()
         # convert the state to array index
-        state.balls['robot'][0] = robot_ball1
-        state.balls['robot'][1] = robot_ball2
-        state.balls['child'][0] = child_ball1
-        state.balls['child'][1] = child_ball2 
+        state.balls['robot'][0] = np.array(robot_ball1)
+        state.balls['robot'][1] = np.array(robot_ball2)
+        state.balls['child'][0] = np.array(child_ball1)
+        state.balls['child'][1] = np.array(child_ball2)
         state.is_child_turn = turn
 
         return state

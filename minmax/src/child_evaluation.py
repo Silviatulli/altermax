@@ -47,8 +47,8 @@ def play_game(robot, child, isTraining=True):
                                      demonstration_reward,
                                      demonstration_new_state)
             
-            # (examples) = robot.give_explanation()
-            # child.explanation_update(examples)
+            examples = robot.give_explanation()
+            child.explanation_update(examples)
 
 
         old_state = state
