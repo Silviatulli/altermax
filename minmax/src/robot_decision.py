@@ -11,7 +11,11 @@ class Robot(object):
     def policy(self,state):
         #given the current state of the game makes the robot selects an action in the game
         valid_actions = state.valid_actions()
-        best_action = valid_actions[0]
+        try:
+            best_action = valid_actions[0]
+        except:
+            #import pdb; pdb.set_trace()
+            raise
 
         max_value = Q(state, best_action)
         for action in valid_actions:
@@ -59,7 +63,10 @@ class Robot(object):
             candidate_states = np.random.randint(low=1, high=array_shape, size=10)
             for state_idx in candidate_states:
                 state = GameState.get_state(state_idx)                
-                if state.is_child_turn == False and state.isValid() and not state.isFinished():
+                if (state.is_child_turn == False 
+                    and state.isValid() 
+                    and not state.isFinished()
+                    and len(state.valid_actions()) > 0):
                     valid_states.append(state_idx)
     
         valid_states = valid_states[:num_examples]
