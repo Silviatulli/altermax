@@ -83,7 +83,7 @@ class ChildQlearning(object):
         self.q_table[state_id, action_id] = q_value
         return
 
-    # def explanation_update(self, examples):
-    #     return
+    def explanation_update(self, examples):
+        return
     
 
