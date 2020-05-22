@@ -60,6 +60,7 @@ class Robot(object):
         valid_states = []
         num_examples = 10
         while len(valid_states) < num_examples:
+            print('generating samples')
             candidate_states = np.random.randint(low=1, high=array_shape, size=10)
             for state_idx in candidate_states:
                 state = GameState.get_state(state_idx)                

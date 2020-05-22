@@ -37,18 +37,19 @@ def play_game(robot, child, isTraining=True):
         else:
             action, ball_id = robot.policy(state)
 
-            (demonstration_state,
-             demonstration_action,
-             demonstration_reward,
-             demonstration_new_state) = robot.give_demonstration((action, ball_id), 
-                                                           state)
-            child.demonstration_update(demonstration_state,
-                                     demonstration_action,
-                                     demonstration_reward,
-                                     demonstration_new_state)
-            
-            examples = robot.give_explanation()
-            child.explanation_update(examples)
+            if isTraining:
+                (demonstration_state,
+                demonstration_action,
+                demonstration_reward,
+                demonstration_new_state) = robot.give_demonstration((action, ball_id), 
+                                                            state)
+                child.demonstration_update(demonstration_state,
+                                        demonstration_action,
+                                        demonstration_reward,
+                                        demonstration_new_state)
+                
+                # examples = robot.give_explanation()
+                # child.explanation_update(examples)
 
 
         old_state = state
@@ -100,16 +101,25 @@ if __name__ == "__main__":
     print("MinimaxChild performance: {0}".format(threshold))
 
     games_played = 0
-    win_rate_child = evaluate(robot, child)
-
-    while win_rate_child < threshold or games_played < 1000:
-        train(robot, child, num_episodes=episodes_between_evaluations)
-        games_played += episodes_between_evaluations
+    performance_list = []
+    for epoch in range(5):
+        print('Epoch number: ', epoch)
         win_rate_child = evaluate(robot, child)
-        print("QLearningChild performance: {0}".format(win_rate_child))
+        while win_rate_child < threshold or games_played < 1000:
+            train(robot, child, num_episodes=episodes_between_evaluations)
+            games_played += episodes_between_evaluations
+            win_rate_child = evaluate(robot, child)
+            print("QLearningChild performance: {0}".format(win_rate_child))
 
-    msg = "QLearning needs {0} episodes to be as good as the minimax."
-    print(msg.format(games_played))
+        msg = "QLearning needs {0} episodes to be as good as the minimax."
+        performance_list.append(games_played)
+        print(msg.format(games_played))
+
+    average_performance = sum(performance_list)/len(performance_list)
+    msg_average = "QLearning need {0} episodes on average to be as good as the minmax."
+    print(msg_average.format(average_performance))
+
+
 
 
     # for game in range(number_of_games):
