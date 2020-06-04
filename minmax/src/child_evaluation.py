@@ -17,6 +17,7 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.style 
+from multiprocessing import Pool
 
 
 #TODO create child_minmax option
@@ -66,6 +67,8 @@ def play_game(robot, child, isTraining=True):
 
 
 #keyword argument - optional or extra arguments 
+
+
 def train(robot, child, num_episodes=1):
     for episode in tqdm(range(num_episodes)):
         outcome, num_actions = play_game(robot,child)
@@ -88,36 +91,37 @@ def evaluate(robot, child):
 # print rewards for child_minmax and child_qlearning
 # plot rewards per time steps
 
+def process(robot,child):
+    minimaxChild = ChildMinmax()
+    threshold = evaluate(robot, minimaxChild)
+    games_played = 0
+    win_rate_child = evaluate(robot, child)
+    while win_rate_child < threshold or games_played < 1000:
+        train(robot, child, num_episodes=episodes_between_evaluations)
+        games_played += episodes_between_evaluations
+        win_rate_child = evaluate(robot, child)
+        print("QLearningChild performance: {0}".format(win_rate_child))
+
+    return games_played
+
 
 
 
 if __name__ == "__main__":
-    robot = Robot()
-    child = ChildQlearning()
-    minimaxChild = ChildMinmax()
-    episodes_between_evaluations = 100
 
-    threshold = evaluate(robot, minimaxChild)
-    print("MinimaxChild performance: {0}".format(threshold))
+    with Pool(processes=5) as pool:
+        episodes_between_evaluations = 100     
+        game_tuples = [(Robot(), ChildQlearning())] * 5
+        
 
-    games_played = 0
-    performance_list = []
-    for epoch in range(5):
-        print('Epoch number: ', epoch)
-        win_rate_child = evaluate(robot, child)
-        while win_rate_child < threshold or games_played < 1000:
-            train(robot, child, num_episodes=episodes_between_evaluations)
-            games_played += episodes_between_evaluations
-            win_rate_child = evaluate(robot, child)
-            print("QLearningChild performance: {0}".format(win_rate_child))
+        performance_list = pool.starmap(process, game_tuples)
+        average_performance = sum(performance_list)/len(performance_list)
+        msg_average = "QLearning need {0} episodes on average to be as good as the minmax."
+        print(msg_average.format(average_performance))
 
-        msg = "QLearning needs {0} episodes to be as good as the minimax."
-        performance_list.append(games_played)
-        print(msg.format(games_played))
 
-    average_performance = sum(performance_list)/len(performance_list)
-    msg_average = "QLearning need {0} episodes on average to be as good as the minmax."
-    print(msg_average.format(average_performance))
+
+
 
 
 
