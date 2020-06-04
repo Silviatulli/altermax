@@ -92,6 +92,7 @@ def evaluate(robot, child):
 # plot rewards per time steps
 
 def process(robot,child):
+    episodes_between_evaluations = 100 
     minimaxChild = ChildMinmax()
     threshold = evaluate(robot, minimaxChild)
     games_played = 0
@@ -110,14 +111,14 @@ def process(robot,child):
 if __name__ == "__main__":
 
     with Pool(processes=5) as pool:
-        episodes_between_evaluations = 100     
         game_tuples = [(Robot(), ChildQlearning())] * 5
-        
-
         performance_list = pool.starmap(process, game_tuples)
         average_performance = sum(performance_list)/len(performance_list)
         msg_average = "QLearning need {0} episodes on average to be as good as the minmax."
         print(msg_average.format(average_performance))
+    
+    #visualize performance list
+    #create joint plot
 
 
 
