@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
 from minmax import GameState
-from minmax import Q
+from minmax.minmax import Q
 
 
 class Robot(object):

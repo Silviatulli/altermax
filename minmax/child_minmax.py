@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
-from minimax import GameState
-from minmax import Q
+from minmax import GameState
+from minmax.minmax import Q
 
 
 class ChildMinmax(object):
