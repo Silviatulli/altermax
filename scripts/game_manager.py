@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import numpy as np
-from game_model import GameState
+from minmax.game_model import GameState
 from minmax import Q
-from interface import View
-from robot_decision import Robot
-from child_decision import Child
+from minmax.interface import View
+from minmax.robot_decision import Robot
+from minmax.child_decision import Child
 # from robot_manager import RobotManager
 import time
 

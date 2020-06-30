@@ -51,7 +51,7 @@ class Robot(object):
         return (state, action, reward, new_state)
 
     def give_explanation(self):
-        array_shape = 12*12*12*12*2 
+        array_shape = 12*12*12*12*2
 
         valid_states = []
         num_examples = 10

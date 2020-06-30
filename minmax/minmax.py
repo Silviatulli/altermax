@@ -1,4 +1,4 @@
-from minimax.game_model import GameState
+from minmax import GameState
 import functools
 
 
@@ -56,6 +56,7 @@ def V(state):
     node = Node(is_child_turn=state.is_child_turn, balls=state.balls)
     value = minimax(node, 3)
     return value
+
 
 @functools.lru_cache(maxsize=int(5e5), typed=False)
 def Q(state, action):

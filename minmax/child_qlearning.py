@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from game_model import GameState
+from minmax import GameState
 
 
 class ChildQlearning(object):
@@ -28,7 +28,7 @@ class ChildQlearning(object):
 
         best_actions = list()
         for action in valid_actions:
-            if max_value == self.Q(state, action): 
+            if max_value == self.Q(state, action):
                 best_actions.append(action)
 
         # choose the best action
@@ -40,7 +40,7 @@ class ChildQlearning(object):
             action = best_actions[idx]
 
         return action
-    
+
     def update(self, state, action, new_state):
         # reward function
         if state.get_score('child') < new_state.get_score('child'):
@@ -59,32 +59,31 @@ class ChildQlearning(object):
         state_id = GameState.get_state_id(state)
         action_name, ball_id = action
         action_id = GameState.get_action_id(action_name, ball_id)
-        
+
         self.q_table[state_id, action_id] = q_value
-        
-        
+
         return
 
     def demonstration_update(self, state, action, reward, new_state):
         # TODO: update the q-table when the robot makes an action
         # import robot decision
         # retrieve robot state, action and reward
-        # translate the robot state, action and reward in useful information (q values)
+        # translate the robot state, action and reward in useful
+        # information (q values)
         # update q-table
-        
+
         new_state_idx = GameState.get_state_id(new_state)
         alpha = 0.8
         gamma = 0.99
-        q_value = (1-alpha)*self.Q(state,action) + alpha * (reward + gamma * np.max(self.q_table[new_state_idx, :]))
-        
+        q_value = (1-alpha)*self.Q(state, action) + alpha * \
+            (reward + gamma * np.max(self.q_table[new_state_idx, :]))
+
         state_id = GameState.get_state_id(state)
         action_name, ball_id = action
         action_id = GameState.get_action_id(action_name, ball_id)
-        
+
         self.q_table[state_id, action_id] = q_value
         return
 
     def explanation_update(self, examples):
         return
-    
-

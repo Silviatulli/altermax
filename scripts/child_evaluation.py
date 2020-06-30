@@ -2,25 +2,28 @@
 # import the modules: child decision and robot decision
 # define a policy (q-learning)
 # define optimal policy performance (performance metrics)
-# compare number of win percentage for a x episodes (roll out policies - compute the accumulated rewards - minmax child vs qlearning child)
-# in this way we have a baseline for the number of games we need to play
-# define train steps: set the number of episodes (how many times you want the child plays the game)
+# compare number of win percentage for a x episodes (roll out policies
+#  - compute the accumulated rewards - minmax child vs qlearning child)
+# in this way we have a baseline for the number of games we need to
+# play
+# define train steps: set the number of episodes (how many times you want
+# the child plays the game)
 # play the game x times
 # save the q values
 # check how many times the q values are updated
 
-from child_minmax import ChildMinmax
-from child_qlearning import ChildQlearning
-from robot_decision import Robot
-from game_model import GameState
+from minmax.child_minmax import ChildMinmax
+from minmax.child_qlearning import ChildQlearning
+from minmax.robot_decision import Robot
+from minmax.game_model import GameState
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.style 
+import matplotlib.style
 from multiprocessing import Pool
 
 
-#TODO create child_minmax option
+# TODO create child_minmax option
 
 
 def play_game(robot, child, isTraining=True):
@@ -40,18 +43,18 @@ def play_game(robot, child, isTraining=True):
 
             if isTraining:
                 (demonstration_state,
-                demonstration_action,
-                demonstration_reward,
-                demonstration_new_state) = robot.give_demonstration((action, ball_id), 
-                                                            state)
+                 demonstration_action,
+                 demonstration_reward,
+                 demonstration_new_state) = robot.give_demonstration((action,
+                                                                      ball_id),
+                                                                     state)
                 child.demonstration_update(demonstration_state,
-                                        demonstration_action,
-                                        demonstration_reward,
-                                        demonstration_new_state)
+                                           demonstration_action,
+                                           demonstration_reward,
+                                           demonstration_new_state)
 
                 # examples = robot.give_explanation()
                 # child.explanation_update(examples)
-
 
         old_state = state
         state = state.make_action(action, ball_id)
@@ -66,7 +69,7 @@ def play_game(robot, child, isTraining=True):
     return outcome, num_actions
 
 
-#keyword argument - optional or extra arguments 
+# keyword argument - optional or extra arguments
 
 
 def train(robot, child, num_episodes=1):
@@ -90,6 +93,7 @@ def evaluate(robot, child):
 # print rewards for child_minmax and child_qlearning
 # plot rewards per time steps
 
+
 def process(robot, child):
     episodes_between_evaluations = 100
     minimaxChild = ChildMinmax()
@@ -105,26 +109,18 @@ def process(robot, child):
     return games_played
 
 
-
-
 if __name__ == "__main__":
 
     with Pool(processes=5) as pool:
         game_tuples = [(Robot(), ChildQlearning())] * 5
         performance_list = pool.starmap(process, game_tuples)
         average_performance = sum(performance_list)/len(performance_list)
-        msg_average = "QLearning need {0} episodes on average to be as good as the minmax."
+        msg_average = ("QLearning need {0} episodes on average",
+                       " to be as good as the minmax.")
         print(msg_average.format(average_performance))
-    
-    #visualize performance list
-    #create joint plot
 
-
-
-
-
-
-
+    # visualize performance list
+    # create joint plot
 
     # for game in range(number_of_games):
     #     outcome, num_actions = play_game(robot,child_qlearning)

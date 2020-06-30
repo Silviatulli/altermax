@@ -11,13 +11,13 @@ class View(object):
         pg.display.set_caption('Minicomputer Tug of War')
 
     def draw_empty_board(self):
-        self.surface.fill((255,255,255))
-        rectangles = {"min_score":[80, 270, 180, 180], "max_score":[1620, 270, 180, 180], "800":[360, 180, 180, 180],
-                 "400":[540, 180, 180, 180], "200":[360, 360, 180, 180], "100":[540, 360, 180, 180],
-                 "80":[780, 180, 180, 180], "40": [960, 180, 180, 180], "20":[780, 360, 180, 180],
-                 "10":[960, 360, 180, 180], "8":[1200, 180, 180, 180], "4":[1380, 180, 180, 180],
-                 "2":[1200, 360, 180, 180], "1":[1380, 360, 180, 180]}
-        
+        self.surface.fill((255, 255, 255))
+        rectangles = {"min_score": [80, 270, 180, 180], "max_score": [1620, 270, 180, 180], "800": [360, 180, 180, 180],
+                      "400": [540, 180, 180, 180], "200": [360, 360, 180, 180], "100": [540, 360, 180, 180],
+                      "80": [780, 180, 180, 180], "40": [960, 180, 180, 180], "20": [780, 360, 180, 180],
+                      "10": [960, 360, 180, 180], "8": [1200, 180, 180, 180], "4": [1380, 180, 180, 180],
+                      "2": [1200, 360, 180, 180], "1": [1380, 360, 180, 180]}
+
         for rect in rectangles:
             rect_pos = rectangles[rect]
             color = (0, 0, 0)
@@ -25,11 +25,11 @@ class View(object):
 
     def draw_score(self, player, value):
         # TODO: Display the score of 'value' for either the child or the robot
-        rectangles = {"min_score":[80, 270, 180, 180], "max_score":[1620, 270, 180, 180], "800":[360, 180, 180, 180],
-            "400":[540, 180, 180, 180], "200":[360, 360, 180, 180], "100":[540, 360, 180, 180],
-            "80":[780, 180, 180, 180], "40": [960, 180, 180, 180], "20":[780, 360, 180, 180],
-            "10":[960, 360, 180, 180], "8":[1200, 180, 180, 180], "4":[1380, 180, 180, 180],
-            "2":[1200, 360, 180, 180], "1":[1380, 360, 180, 180]}
+        rectangles = {"min_score": [80, 270, 180, 180], "max_score": [1620, 270, 180, 180], "800": [360, 180, 180, 180],
+                      "400": [540, 180, 180, 180], "200": [360, 360, 180, 180], "100": [540, 360, 180, 180],
+                      "80": [780, 180, 180, 180], "40": [960, 180, 180, 180], "20": [780, 360, 180, 180],
+                      "10": [960, 360, 180, 180], "8": [1200, 180, 180, 180], "4": [1380, 180, 180, 180],
+                      "2": [1200, 360, 180, 180], "1": [1380, 360, 180, 180]}
         font = pg.font.SysFont("Roboto", 60)
 
         text = font.render(str(value), True, (0, 0, 0))
@@ -42,14 +42,14 @@ class View(object):
 
         self.surface.blit(text, (position_x, position_y))
 
-    def draw_balls(self, balls):  
-        rectangles = {"min_score":[80, 270, 180, 180], "max_score":[1620, 270, 180, 180], "800":[360, 180, 180, 180],
-            "400":[540, 180, 180, 180], "200":[360, 360, 180, 180], "100":[540, 360, 180, 180],
-            "80":[780, 180, 180, 180], "40": [960, 180, 180, 180], "20":[780, 360, 180, 180],
-            "10":[960, 360, 180, 180], "8":[1200, 180, 180, 180], "4":[1380, 180, 180, 180],
-            "2":[1200, 360, 180, 180], "1":[1380, 360, 180, 180]}
+    def draw_balls(self, balls):
+        rectangles = {"min_score": [80, 270, 180, 180], "max_score": [1620, 270, 180, 180], "800": [360, 180, 180, 180],
+                      "400": [540, 180, 180, 180], "200": [360, 360, 180, 180], "100": [540, 360, 180, 180],
+                      "80": [780, 180, 180, 180], "40": [960, 180, 180, 180], "20": [780, 360, 180, 180],
+                      "10": [960, 360, 180, 180], "8": [1200, 180, 180, 180], "4": [1380, 180, 180, 180],
+                      "2": [1200, 360, 180, 180], "1": [1380, 360, 180, 180]}
 
-        rectangle_lookup = [["800", "400", "80", "40", "8", "4"], 
+        rectangle_lookup = [["800", "400", "80", "40", "8", "4"],
                             ["200", "100", "20", "10", "2", "1"]]
 
         robot_ball_one = balls['robot'][0]
@@ -81,51 +81,61 @@ class View(object):
 
             is_robot_ball = is_robot_ball_one or is_robot_ball_two
             is_child_ball = is_child_ball_one or is_child_ball_two
-            
+
             if is_robot_ball and is_child_ball:
                 robot_color = (83, 109, 254)
                 child_color = (211, 47, 47)
                 radius = 30
 
                 square_position = np.unravel_index(square_idx, [2, 6])
-                rect = rectangles[rectangle_lookup[square_position[0]][square_position[1]]] #pixel position
+                # pixel position
+                rect = rectangles[rectangle_lookup[square_position[0]]
+                                  [square_position[1]]]
 
                 robot_position_x = rect[0] + int(0.30*rect[2])
                 robot_position_y = rect[1] + int(0.30*rect[3])
                 child_position_x = rect[0] + int(0.70*rect[2])
                 child_position_y = rect[1] + int(0.70*rect[3])
 
-                pg.draw.circle(self.surface, robot_color, (robot_position_x, robot_position_y), radius)
+                pg.draw.circle(self.surface, robot_color,
+                               (robot_position_x, robot_position_y), radius)
                 if is_robot_ball_one:
                     text = font.render('A', True, (255, 255, 255))
-                    self.surface.blit(text, (robot_position_x-10, robot_position_y-10))
-                elif is_robot_ball_two: 
+                    self.surface.blit(
+                        text, (robot_position_x-10, robot_position_y-10))
+                elif is_robot_ball_two:
                     text = font.render('B', True, (255, 255, 255))
-                    self.surface.blit(text, (robot_position_x-10, robot_position_y-10))
+                    self.surface.blit(
+                        text, (robot_position_x-10, robot_position_y-10))
 
-                pg.draw.circle(self.surface, child_color, (child_position_x, child_position_y), radius)
+                pg.draw.circle(self.surface, child_color,
+                               (child_position_x, child_position_y), radius)
                 if is_child_ball_one:
                     text = font.render('A', True, (255, 255, 255))
-                    self.surface.blit(text, (child_position_x-10, child_position_y-10))
-                elif is_child_ball_two: 
+                    self.surface.blit(
+                        text, (child_position_x-10, child_position_y-10))
+                elif is_child_ball_two:
                     text = font.render('B', True, (255, 255, 255))
-                    self.surface.blit(text, (child_position_x-10, child_position_y-10))
+                    self.surface.blit(
+                        text, (child_position_x-10, child_position_y-10))
 
             elif is_robot_ball:
                 robot_color = (83, 109, 254)
                 radius = 30
 
                 square_position = np.unravel_index(square_idx, [2, 6])
-                rect = rectangles[rectangle_lookup[square_position[0]][square_position[1]]]
+                rect = rectangles[rectangle_lookup[square_position[0]]
+                                  [square_position[1]]]
 
                 position_x = rect[0] + int(0.5*rect[2])
                 position_y = rect[1] + int(0.5*rect[3])
-                
-                pg.draw.circle(self.surface, robot_color, (position_x, position_y), radius)
+
+                pg.draw.circle(self.surface, robot_color,
+                               (position_x, position_y), radius)
                 if is_robot_ball_one:
                     text = font.render('A', True, (255, 255, 255))
                     self.surface.blit(text, (position_x-10, position_y-10))
-                elif is_robot_ball_two: 
+                elif is_robot_ball_two:
                     text = font.render('B', True, (255, 255, 255))
                     self.surface.blit(text, (position_x-10, position_y-10))
 
@@ -134,15 +144,17 @@ class View(object):
                 radius = 30
 
                 square_position = np.unravel_index(square_idx, [2, 6])
-                rect = rectangles[rectangle_lookup[square_position[0]][square_position[1]]]
+                rect = rectangles[rectangle_lookup[square_position[0]]
+                                  [square_position[1]]]
                 position_x = rect[0] + int(0.5*rect[2])
                 position_y = rect[1] + int(0.5*rect[3])
-                
-                pg.draw.circle(self.surface, child_color, (position_x, position_y), radius)
+
+                pg.draw.circle(self.surface, child_color,
+                               (position_x, position_y), radius)
                 if is_child_ball_one:
                     text = font.render('A', True, (255, 255, 255))
                     self.surface.blit(text, (position_x-10, position_y-10))
-                elif is_child_ball_two: 
+                elif is_child_ball_two:
                     text = font.render('B', True, (255, 255, 255))
                     self.surface.blit(text, (position_x-10, position_y-10))
 
@@ -168,7 +180,7 @@ class View(object):
 
 
 if __name__ == "__main__":
-    from game_model import GameState
+    from minmax import GameState
     import time
     state = GameState()
     visualization = View()

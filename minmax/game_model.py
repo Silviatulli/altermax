@@ -7,7 +7,7 @@ class GameState(object):
         self.balls = {
             'robot': [np.array([0, 0]), np.array([1, 0])],
             'child': [np.array([0, 5]), np.array([1, 5])]
-            }
+        }
         self.is_child_turn = True
 
     def get_score(self, player):
@@ -59,15 +59,15 @@ class GameState(object):
         else:
             player = 'robot'
         direction = {
-                        'up': np.array([-1, 0]),
-                        'down': np.array([1, 0]),
-                        'left': np.array([0, -1]),
-                        'right': np.array([0, 1]),
-                        'up_left': np.array([-1, -1]),
-                        'up_right': np.array([-1, 1]),
-                        'down_left': np.array([1, -1]),
-                        'down_right': np.array([1, 1])
-                    }
+            'up': np.array([-1, 0]),
+            'down': np.array([1, 0]),
+            'left': np.array([0, -1]),
+            'right': np.array([0, 1]),
+            'up_left': np.array([-1, -1]),
+            'up_right': np.array([-1, 1]),
+            'down_left': np.array([1, -1]),
+            'down_right': np.array([1, 1])
+        }
 
         ball_position = self.balls[player][ball_id]
         new_position = ball_position + direction[action]
@@ -125,24 +125,24 @@ class GameState(object):
     @staticmethod
     def get_action_id(action, ball_id):
         action_id = {
-                     ('left', 0): 0,
-                     ('left', 1): 1,
-                     ('right', 0): 2,
-                     ('right', 1): 3,
-                     ('up', 0): 4,
-                     ('up', 1): 5,
-                     ('down', 0): 6,
-                     ('down', 1): 7,
-                     ('up_left', 0): 8,
-                     ('up_left', 1): 9,
-                     ('down_left', 0): 10,
-                     ('down_left', 1): 11,
-                     ('up_right', 0): 12,
-                     ('up_right', 1): 13,
-                     ('down_right', 0): 14,
-                     ('down_right', 1): 15
-                    }
-        return action_id[(action,ball_id)]
+            ('left', 0): 0,
+            ('left', 1): 1,
+            ('right', 0): 2,
+            ('right', 1): 3,
+            ('up', 0): 4,
+            ('up', 1): 5,
+            ('down', 0): 6,
+            ('down', 1): 7,
+            ('up_left', 0): 8,
+            ('up_left', 1): 9,
+            ('down_left', 0): 10,
+            ('down_left', 1): 11,
+            ('up_right', 0): 12,
+            ('up_right', 1): 13,
+            ('down_right', 0): 14,
+            ('down_right', 1): 15
+        }
+        return action_id[(action, ball_id)]
 
     @staticmethod
     def get_state_id(state):
@@ -153,22 +153,22 @@ class GameState(object):
         child_ball2 = state.balls['child'][1]
         turn = state.is_child_turn
 
-        robot_ball1_idx = np.ravel_multi_index(robot_ball1, [2,6])
-        robot_ball2_idx = np.ravel_multi_index(robot_ball2, [2,6])
-        child_ball1_idx = np.ravel_multi_index(child_ball1, [2,6])
-        child_ball2_idx = np.ravel_multi_index(child_ball2, [2,6])
+        robot_ball1_idx = np.ravel_multi_index(robot_ball1, [2, 6])
+        robot_ball2_idx = np.ravel_multi_index(robot_ball2, [2, 6])
+        child_ball1_idx = np.ravel_multi_index(child_ball1, [2, 6])
+        child_ball2_idx = np.ravel_multi_index(child_ball2, [2, 6])
         turn_idx = 1 if turn else 0
-        
+
         multi_idx = [
-                     robot_ball1_idx,
-                     robot_ball2_idx,
-                     child_ball1_idx,
-                     child_ball2_idx,
-                     turn_idx
-                    ]
-        
-        #convert the array index to integer number
-        array_shape = (12,12,12,12,2)
+            robot_ball1_idx,
+            robot_ball2_idx,
+            child_ball1_idx,
+            child_ball2_idx,
+            turn_idx
+        ]
+
+        # convert the array index to integer number
+        array_shape = (12, 12, 12, 12, 2)
         state_idx = np.ravel_multi_index(multi_idx, array_shape)
 
         return state_idx
@@ -176,22 +176,22 @@ class GameState(object):
     @staticmethod
     def get_state(state_idx):
         # array_range = 12*12*12*12*2
-        array_shape = (12,12,12,12,2)
+        array_shape = (12, 12, 12, 12, 2)
         multi_idx = np.unravel_index(state_idx, array_shape)
-        
-        (robot_ball1_idx, 
+
+        (robot_ball1_idx,
          robot_ball2_idx,
          child_ball1_idx,
          child_ball2_idx,
          turn_idx
-        ) = multi_idx
-        
+         ) = multi_idx
+
         turn = True if turn_idx == 1 else False
-        robot_ball1 = np.unravel_index(robot_ball1_idx, [2,6])
-        robot_ball2 = np.unravel_index(robot_ball2_idx, [2,6])
-        child_ball1 = np.unravel_index(child_ball1_idx, [2,6])
-        child_ball2 = np.unravel_index(child_ball2_idx, [2,6])
-        
+        robot_ball1 = np.unravel_index(robot_ball1_idx, [2, 6])
+        robot_ball2 = np.unravel_index(robot_ball2_idx, [2, 6])
+        child_ball1 = np.unravel_index(child_ball1_idx, [2, 6])
+        child_ball2 = np.unravel_index(child_ball2_idx, [2, 6])
+
         state = GameState()
         # convert the state to array index
         state.balls['robot'][0] = np.array(robot_ball1)
@@ -203,7 +203,7 @@ class GameState(object):
         return state
 
     def get_winner(self):
-        #TODO: refactor when time
+        # TODO: refactor when time
         pass
 
 

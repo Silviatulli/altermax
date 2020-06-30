@@ -1,5 +1,5 @@
 import numpy as np
-from game_model import GameState
+from minmax.game_model import GameState
 
 
 class Child(object):
@@ -51,9 +51,9 @@ class Child(object):
         state_id = GameState.get_state_id(state)
         action_name, ball_id = action
         action_id = GameState.get_action_id(action_name, ball_id)
-        
+
         self.q_table[state_id, action_id] = q_value
-        
+
         return
 
         self.q_table[state_id, action_id] = q_value

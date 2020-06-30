@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 import numpy as np
-from game_model import GameState
+from minimax import GameState
 from minmax import Q
+
 
 class ChildMinmax(object):
 
-    def policy(self,state):
-        #given the current state of the game makes the child selects an action in the game
+    def policy(self, state):
+        # given the current state of the game makes the child selects an
+        # action in the game
         valid_actions = state.valid_actions()
         best_action = valid_actions[0]
         max_value = Q(state, best_action)
@@ -32,6 +34,6 @@ class ChildMinmax(object):
     def explanation_update(self, examples):
         return
 
+
 if __name__ == "__main__":
     pass
- 
