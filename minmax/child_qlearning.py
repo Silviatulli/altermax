@@ -1,12 +1,12 @@
 import numpy as np
 import random
-from minmax import GameState
+from minmax import GameState, Action
 
 
 class ChildQlearning(object):
     def __init__(self):
         num_states = (12 * 12)**2 * 2
-        self.q_table = np.zeros((num_states, 16))
+        self.q_table = np.zeros((num_states, len(Action)))
 
     def Q(self, state, action):
         state_id = GameState.get_state_id(state)

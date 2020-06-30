@@ -1,5 +1,6 @@
-from game_model import GameState
+from minmax.game_model import GameState
 import functools
+from copy import deepcopy
 
 
 class Node(GameState):
@@ -23,9 +24,10 @@ class Node(GameState):
 
         # populate tree
         for valid_action in self.valid_actions():
-            new_state, reward, done, info = self.make_action(valid_action)
-            node = Node(new_state.is_child_turn, new_state.balls)
-            nodes.append(node)
+            env_copy = deepcopy(self)
+            env_copy.make_action(valid_action)
+            # node = Node(env_copy.is_child_turn, env_copy.balls)
+            nodes.append(env_copy)
 
         return nodes
 
@@ -61,8 +63,9 @@ def V(state):
 @functools.lru_cache(maxsize=int(5e5), typed=False)
 def Q(state, action):
     action = action
-    new_state, reward, done, info = state.make_action(action)
-    q_value = V(new_state)
+    env_copy = deepcopy(state)
+    env_copy.make_action(action)
+    q_value = V(env_copy)
     return q_value
 
 

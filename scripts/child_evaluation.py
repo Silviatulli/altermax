@@ -21,7 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.style
 from multiprocessing import Pool
-
+from copy import deepcopy
 
 # TODO create child_minmax option
 
@@ -35,18 +35,17 @@ def play_game(robot, child, isTraining=True):
         valid_actions = state.valid_actions()
 
         if state.is_child_turn:
-            action, ball_id = child.policy(state)
+            action = child.policy(state)
             num_actions += 1
 
         else:
-            action, ball_id = robot.policy(state)
+            action = robot.policy(state)
 
             if isTraining:
                 (demonstration_state,
                  demonstration_action,
                  demonstration_reward,
-                 demonstration_new_state) = robot.give_demonstration((action,
-                                                                      ball_id),
+                 demonstration_new_state) = robot.give_demonstration(action,
                                                                      state)
                 child.demonstration_update(demonstration_state,
                                            demonstration_action,
@@ -56,7 +55,7 @@ def play_game(robot, child, isTraining=True):
                 # examples = robot.give_explanation()
                 # child.explanation_update(examples)
 
-        old_state = state
+        old_state = deepcopy(state)
         state, reward, done, info = state.make_action(action)
         if isTraining:
             child.update(old_state, action, state)
@@ -111,13 +110,14 @@ def process(robot, child):
 
 if __name__ == "__main__":
 
-    with Pool(processes=5) as pool:
-        game_tuples = [(Robot(), ChildQlearning())] * 5
-        performance_list = pool.starmap(process, game_tuples)
-        average_performance = sum(performance_list)/len(performance_list)
-        msg_average = ("QLearning need {0} episodes on average",
-                       " to be as good as the minmax.")
-        print(msg_average.format(average_performance))
+    process(Robot(), ChildQlearning())
+    # with Pool(processes=5) as pool:
+    #     game_tuples = [(Robot(), ChildQlearning())] * 5
+    #     performance_list = pool.starmap(process, game_tuples)
+    #     average_performance = sum(performance_list)/len(performance_list)
+    #     msg_average = ("QLearning need {0} episodes on average",
+    #                    " to be as good as the minmax.")
+    #     print(msg_average.format(average_performance))
 
     # visualize performance list
     # create joint plot

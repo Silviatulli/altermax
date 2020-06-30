@@ -21,17 +21,17 @@ def play_game(robot, child):
         valid_actions = state.valid_actions()
 
         if state.is_child_turn:
-            action, ball_id = child.policy(state)
+            action = child.policy(state)
             num_actions += 1
 
         else:
-            action, ball_id = robot.policy(state)
-            robot.give_demonstration((action, ball_id), state)
+            action = robot.policy(state)
+            robot.give_demonstration(action, state)
 
         old_state = state
         print(GameState.get_state_id(state))
         state, reward, done, info = state.make_action(action)
-        child.update(old_state, (action, ball_id), state)
+        child.update(old_state, action, state)
 
     visualization.update(state)
     time.sleep(1.5)

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import numpy as np
 from minmax import GameState
-from minmax.minmax import Q
+from minmax.minmaxSearch import Q
+from copy import deepcopy
 
 
 class Robot(object):
@@ -42,7 +43,8 @@ class Robot(object):
         # consider state, action and reward
 
         # reward function
-        new_state, reward, done, info = state.make_action(action)
+        new_state = deepcopy(state)
+        new_state.make_action(action)
         if state.get_score('child') < new_state.get_score('child'):
             reward = 1
         else:

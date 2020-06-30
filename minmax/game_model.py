@@ -92,6 +92,8 @@ class GameState(object):
 
         self.balls[player][ball_id] = new_position
         self.is_child_turn = not self.is_child_turn
+        if not self.isValid():
+            raise Exception()
         return self, 0, self.isFinished(), None
 
     def valid_actions(self):
@@ -132,7 +134,6 @@ class GameState(object):
         for action in actions:
             ball_id = 0 if action < 9 else 1
             other_ball_id = (ball_id + 1) % 2
-            # import pdb; pdb.set_trace()
             pos = self.balls[player][ball_id]
             y2, x2 = self.balls[player][other_ball_id] + 1
             y, x = pos + DIRECTION[action] + 1
