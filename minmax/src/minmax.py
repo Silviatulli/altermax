@@ -1,4 +1,5 @@
 from game_model import GameState
+import functools
 
 
 class Node(GameState):
@@ -28,7 +29,7 @@ class Node(GameState):
 
         return nodes
 
-
+@functools.lru_cache(maxsize=int(5e5), typed=False)
 def minimax(node, depth):
     score = node.score()
     children = node.children()
@@ -55,7 +56,7 @@ def V(state):
     value = minimax(node, 3)
     return value
 
-
+@functools.lru_cache(maxsize=int(5e5), typed=False)
 def Q(state, action):
     action, ball_id = action
     new_state = state.make_action(action, ball_id)

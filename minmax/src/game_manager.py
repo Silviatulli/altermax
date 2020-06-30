@@ -26,7 +26,7 @@ def play_game(robot, child):
 
         else:
             action, ball_id = robot.policy(state)
-            robot.give_explanation((action, ball_id), state)
+            robot.give_demonstration((action, ball_id), state)
 
         old_state = state
         print(GameState.get_state_id(state))
@@ -41,8 +41,6 @@ def play_game(robot, child):
     elif not state.is_child_turn and state.isFinished():
         outcome = 'Success'
 
-    print(outcome)
-    print(num_actions)
     return outcome, num_actions
 
 
