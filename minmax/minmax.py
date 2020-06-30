@@ -1,4 +1,4 @@
-from game_model import GameState
+from minimax.game_model import GameState
 import functools
 
 
@@ -28,6 +28,7 @@ class Node(GameState):
             nodes.append(node)
 
         return nodes
+
 
 @functools.lru_cache(maxsize=int(5e5), typed=False)
 def minimax(node, depth):

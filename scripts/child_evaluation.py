@@ -28,9 +28,9 @@ def play_game(robot, child, isTraining=True):
     num_actions = 0
 
     while not state.isFinished():
-        
+
         valid_actions = state.valid_actions()
-        
+
         if state.is_child_turn:
             action, ball_id = child.policy(state)
             num_actions += 1
@@ -48,7 +48,7 @@ def play_game(robot, child, isTraining=True):
                                         demonstration_action,
                                         demonstration_reward,
                                         demonstration_new_state)
-                
+
                 # examples = robot.give_explanation()
                 # child.explanation_update(examples)
 
@@ -57,12 +57,12 @@ def play_game(robot, child, isTraining=True):
         state = state.make_action(action, ball_id)
         if isTraining:
             child.update(old_state, (action, ball_id), state)
-    
+
     if state.is_child_turn and state.isFinished():
         outcome = -1
     elif not state.is_child_turn and state.isFinished():
         outcome = 1
- 
+
     return outcome, num_actions
 
 
@@ -71,12 +71,11 @@ def play_game(robot, child, isTraining=True):
 
 def train(robot, child, num_episodes=1):
     for episode in tqdm(range(num_episodes)):
-        outcome, num_actions = play_game(robot,child)
-        #print(outcome)
+        outcome, num_actions = play_game(robot, child)
 
 
 def evaluate(robot, child):
-    num_episodes = 50 #episodes
+    num_episodes = 50
     win = 0
     for episode in tqdm(range(num_episodes)):
         outcome, num_actions = play_game(robot,
@@ -87,12 +86,12 @@ def evaluate(robot, child):
     win_rate_child = win * 1.0/num_episodes
     return win_rate_child
 
-#TODO:
+# TODO:
 # print rewards for child_minmax and child_qlearning
 # plot rewards per time steps
 
-def process(robot,child):
-    episodes_between_evaluations = 100 
+def process(robot, child):
+    episodes_between_evaluations = 100
     minimaxChild = ChildMinmax()
     threshold = evaluate(robot, minimaxChild)
     games_played = 0
