@@ -1,5 +1,32 @@
 import numpy as np
-from copy import deepcopy
+from enum import IntEnum
+
+
+class Action(IntEnum):
+    ball1_down_left = 0
+    ball1_down = 1
+    ball1_down_right = 2
+    ball1_left = 3
+    ball1_none = 4
+    ball1_right = 5
+    ball1_up_left = 6
+    ball1_up = 7
+    ball1_up_right = 8
+    ball2_down_left = 9
+    ball2_down = 10
+    ball2_down_right = 11
+    ball2_left = 12
+    ball2_none = 13
+    ball2_right = 14
+    ball2_up_left = 15
+    ball2_up = 16
+    ball2_up_right = 17
+
+
+CARDINAL_DIRECTIONS = np.stack(
+    np.unravel_index(np.arange(9), (3, 3)), axis=1) - 1
+DIRECTION = np.vstack((CARDINAL_DIRECTIONS, CARDINAL_DIRECTIONS))
+OCCUPIED = np.pad(np.zeros((2, 6)), 1, constant_values=1)
 
 
 class GameState(object):
@@ -53,30 +80,19 @@ class GameState(object):
 
         return True
 
-    def make_action(self, action, ball_id):
+    def make_action(self, action):
         if self.is_child_turn:
             player = 'child'
         else:
             player = 'robot'
-        direction = {
-            'up': np.array([-1, 0]),
-            'down': np.array([1, 0]),
-            'left': np.array([0, -1]),
-            'right': np.array([0, 1]),
-            'up_left': np.array([-1, -1]),
-            'up_right': np.array([-1, 1]),
-            'down_left': np.array([1, -1]),
-            'down_right': np.array([1, 1])
-        }
 
+        ball_id = 0 if action < 9 else 1
         ball_position = self.balls[player][ball_id]
-        new_position = ball_position + direction[action]
+        new_position = ball_position + DIRECTION[action]
 
-        # deepcopy for having two copies of the same state and later modify it
-        new_state = deepcopy(self)
-        new_state.balls[player][ball_id] = new_position
-        new_state.is_child_turn = not self.is_child_turn
-        return new_state
+        self.balls[player][ball_id] = new_position
+        self.is_child_turn = not self.is_child_turn
+        return self, 0, self.isFinished(), None
 
     def valid_actions(self):
         if self.is_child_turn:
@@ -85,16 +101,47 @@ class GameState(object):
             player = 'robot'
 
         if player == 'child':
-            actions = ['up', 'down', 'left', 'up_left', 'down_left']
+            actions = [
+                Action.ball1_down_left,
+                Action.ball1_down,
+                Action.ball1_left,
+                Action.ball1_up_left,
+                Action.ball1_up,
+                Action.ball2_down_left,
+                Action.ball2_down,
+                Action.ball2_left,
+                Action.ball2_up_left,
+                Action.ball2_up
+            ]
         else:
-            actions = ['up', 'down', 'right', 'up_right', 'down_right']
+            actions = [
+                Action.ball1_down,
+                Action.ball1_down_right,
+                Action.ball1_right,
+                Action.ball1_up,
+                Action.ball1_up_right,
+                Action.ball2_down,
+                Action.ball2_down_right,
+                Action.ball2_right,
+                Action.ball2_up,
+                Action.ball2_up_right
+            ]
 
         valid_actions = list()
-        for ball_id in [0, 1]:
-            for action in actions:
-                new_state = self.make_action(action, ball_id)
-                if new_state.isValid():
-                    valid_actions.append((action, ball_id))
+
+        for action in actions:
+            ball_id = 0 if action < 9 else 1
+            other_ball_id = (ball_id + 1) % 2
+            # import pdb; pdb.set_trace()
+            pos = self.balls[player][ball_id]
+            y2, x2 = self.balls[player][other_ball_id] + 1
+            y, x = pos + DIRECTION[action] + 1
+            if OCCUPIED[y, x]:
+                continue
+            elif y == y2 and x == x2:
+                continue
+            else:
+                valid_actions.append(action)
 
         return valid_actions
 
@@ -121,28 +168,6 @@ class GameState(object):
         values[child_ball2[0], child_ball2[1]] = 2
 
         return str(values)
-
-    @staticmethod
-    def get_action_id(action, ball_id):
-        action_id = {
-            ('left', 0): 0,
-            ('left', 1): 1,
-            ('right', 0): 2,
-            ('right', 1): 3,
-            ('up', 0): 4,
-            ('up', 1): 5,
-            ('down', 0): 6,
-            ('down', 1): 7,
-            ('up_left', 0): 8,
-            ('up_left', 1): 9,
-            ('down_left', 0): 10,
-            ('down_left', 1): 11,
-            ('up_right', 0): 12,
-            ('up_right', 1): 13,
-            ('down_right', 0): 14,
-            ('down_right', 1): 15
-        }
-        return action_id[(action, ball_id)]
 
     @staticmethod
     def get_state_id(state):
@@ -202,20 +227,24 @@ class GameState(object):
 
         return state
 
-    def get_winner(self):
-        # TODO: refactor when time
-        pass
+    @property
+    def winner(self):
+        if not self.isFinished():
+            return None
+
+        if self.is_child_turn:
+            return 'robot'
+        else:
+            return 'child'
 
 
 if __name__ == "__main__":
-    state = GameState()
-    while not state.isFinished():
-        print(state)
-        print(state.valid_actions())
-
-        valid_actions = state.valid_actions()
-        valid_action_idx = np.random.randint(len(valid_actions))
-        action, ball_id = valid_actions[valid_action_idx]
-        state = state.make_action(action, ball_id)
-
-    print(state)
+    import tqdm
+    for _ in tqdm.tqdm(range(2000)):
+        state = GameState()
+        done = False
+        while not done:
+            valid_actions = state.valid_actions()
+            valid_action_idx = np.random.randint(len(valid_actions))
+            action = valid_actions[valid_action_idx]
+            state, reward, done, info = state.make_action(action)

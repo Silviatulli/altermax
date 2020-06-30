@@ -42,7 +42,7 @@ class Robot(object):
         # consider state, action and reward
 
         # reward function
-        new_state = state.make_action(action[0], action[1])
+        new_state, reward, done, info = state.make_action(action)
         if state.get_score('child') < new_state.get_score('child'):
             reward = 1
         else:
@@ -74,7 +74,7 @@ class Robot(object):
         for robot_state_idx in valid_states:
             robot_state = GameState.get_state(robot_state_idx)
             best_action = self.policy(robot_state)
-            new_state = robot_state.make_action(best_action[0], best_action[1])
+            new_state, reward, done, info = robot_state.make_action(best_action)
 
             if robot_state.get_score('child') < new_state.get_score('child'):
                 reward = 1

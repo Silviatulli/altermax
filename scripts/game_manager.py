@@ -30,7 +30,7 @@ def play_game(robot, child):
 
         old_state = state
         print(GameState.get_state_id(state))
-        state = state.make_action(action, ball_id)
+        state, reward, done, info = state.make_action(action)
         child.update(old_state, (action, ball_id), state)
 
     visualization.update(state)

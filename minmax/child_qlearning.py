@@ -9,10 +9,8 @@ class ChildQlearning(object):
         self.q_table = np.zeros((num_states, 16))
 
     def Q(self, state, action):
-        action_name, ball_id = action
-        action_id = GameState.get_action_id(action_name, ball_id)
         state_id = GameState.get_state_id(state)
-        q_value = self.q_table[state_id, action_id]
+        q_value = self.q_table[state_id, action]
 
         return q_value
 
@@ -57,10 +55,8 @@ class ChildQlearning(object):
         q_value = (1-alpha)*q_sa + alpha * (reward + gamma * V_star)
 
         state_id = GameState.get_state_id(state)
-        action_name, ball_id = action
-        action_id = GameState.get_action_id(action_name, ball_id)
 
-        self.q_table[state_id, action_id] = q_value
+        self.q_table[state_id, action] = q_value
 
         return
 
@@ -79,10 +75,8 @@ class ChildQlearning(object):
             (reward + gamma * np.max(self.q_table[new_state_idx, :]))
 
         state_id = GameState.get_state_id(state)
-        action_name, ball_id = action
-        action_id = GameState.get_action_id(action_name, ball_id)
 
-        self.q_table[state_id, action_id] = q_value
+        self.q_table[state_id, action] = q_value
         return
 
     def explanation_update(self, examples):

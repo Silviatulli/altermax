@@ -57,9 +57,9 @@ def play_game(robot, child, isTraining=True):
                 # child.explanation_update(examples)
 
         old_state = state
-        state = state.make_action(action, ball_id)
+        state, reward, done, info = state.make_action(action)
         if isTraining:
-            child.update(old_state, (action, ball_id), state)
+            child.update(old_state, action, state)
 
     if state.is_child_turn and state.isFinished():
         outcome = -1

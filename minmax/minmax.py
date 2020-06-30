@@ -1,4 +1,4 @@
-from minmax import GameState
+from game_model import GameState
 import functools
 
 
@@ -23,7 +23,7 @@ class Node(GameState):
 
         # populate tree
         for valid_action in self.valid_actions():
-            new_state = self.make_action(valid_action[0], valid_action[1])
+            new_state, reward, done, info = self.make_action(valid_action)
             node = Node(new_state.is_child_turn, new_state.balls)
             nodes.append(node)
 
@@ -60,13 +60,13 @@ def V(state):
 
 @functools.lru_cache(maxsize=int(5e5), typed=False)
 def Q(state, action):
-    action, ball_id = action
-    new_state = state.make_action(action, ball_id)
+    action = action
+    new_state, reward, done, info = state.make_action(action)
     q_value = V(new_state)
     return q_value
 
 
 if __name__ == "__main__":
     node = Node()
-    value = minimax(node, 3)
+    value = minimax(node, 6)
     print(value)

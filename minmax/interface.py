@@ -191,8 +191,8 @@ if __name__ == "__main__":
 
         valid_actions = state.valid_actions()
         valid_action_idx = np.random.randint(len(valid_actions))
-        action, ball_id = valid_actions[valid_action_idx]
-        state = state.make_action(action, ball_id)
+        action = valid_actions[valid_action_idx]
+        state, reward, done, info = state.make_action(action)
 
     visualization.update(state)
     time.sleep(1.5)
