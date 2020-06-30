@@ -4,41 +4,43 @@ from naoqi import ALProxy, ALBroker, ALModule
 from robot_decision import Robot
 
 
-pt_action_dic = {'up': "cima", 'down':"baixo", 'left':"a esquerda", 'right':"a direita", 'up_left':"cima e esquerda", 'up_right':"cima e direita",
-                 'down_left':"baixo e esquerda", 'down_right':"baixo e direita"}
+pt_action_dic = {'up': "cima", 'down': "baixo", 'left': "a esquerda", 'right': "a direita", 'up_left': "cima e esquerda", 'up_right': "cima e direita",
+                 'down_left': "baixo e esquerda", 'down_right': "baixo e direita"}
 
 
 class RobotManager(Robot):
 
     def __init__(self):
         super(RobotManager, self).__init__()
-        #Robot Connection Variables and Services
+        # Robot Connection Variables and Services
         self.nao_IP = '192.168.1.100'
         self.nao_port = 9559
 
         self.myBroker = ALBroker("myBroker",
-                             "0.0.0.0",  # listen to anyone
-                             0,  # find a free port and use it
-                             self.nao_IP,  # parent broker IP
-                             9559)  # parent broker port)
-        
-        self.robot_communication = ALProxy("ALTextToSpeech", self.nao_IP, self.nao_port)
+                                 "0.0.0.0",  # listen to anyone
+                                 0,  # find a free port and use it
+                                 self.nao_IP,  # parent broker IP
+                                 9559)  # parent broker port)
+
+        self.robot_communication = ALProxy(
+            "ALTextToSpeech", self.nao_IP, self.nao_port)
         self.robot_communication.setLanguage('Portuguese')
         self.robot_communication.setVolume(1)
         self.robot_communication.setParameter("speed", 70)
-        
+
         #self.faceProxy = ALProxy("ALFaceDetection", self.nao_IP, self.nao_port)
         self.tracker = ALProxy("ALTracker", self.nao_IP, self.nao_port)
         self.motionProxy = ALProxy("ALMotion", self.nao_IP, self.nao_port)
         self.ledProxy = ALProxy("ALLeds", self.nao_IP, self.nao_port)
-        self.postureProxy = ALProxy("ALRobotPosture", self.nao_IP, self.nao_port)
-        
+        self.postureProxy = ALProxy(
+            "ALRobotPosture", self.nao_IP, self.nao_port)
+
         # Setup Robot
         # Turn on Face Tracking
         self.setup_face_tracking(0.1, turn_on=True)
 
         # Turn on Leds
-        turn_on=True
+        turn_on = True
         if turn_on:
             section1 = ["FaceLeds", "ChestLeds"]
             self.ledProxy.createGroup("turn", section1)
@@ -92,7 +94,7 @@ class RobotManager(Robot):
             # Introduction
             self.postureProxy.goToPosture("Crouch", 1.0)
             self.robot_communication.say(
-                 "Olá, eu sou o Nao. E tu? Como te chamas? \
+                "Olá, eu sou o Nao. E tu? Como te chamas? \
                                               \\pau=1500\\ \
                                               Prazer conhecer-te.\
                                               \\pau=600\\ \
@@ -120,7 +122,6 @@ class RobotManager(Robot):
                                               \\pau=1000\\ \
                                               Boa! Vamos jogar!")
 
-
             # Add target to track
             targetName = "Face"
             faceWidth = faceSize
@@ -132,18 +133,3 @@ class RobotManager(Robot):
         else:
             self.tracker.stopTracker()
             self.tracker.unregisterAllTargets()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
