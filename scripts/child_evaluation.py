@@ -30,7 +30,7 @@ def play_game(robot, child, isTraining=True):
     num_actions = 0
 
     while not state.isFinished():
-            valid_actions = state.valid_actions()
+        valid_actions = state.valid_actions()
 
         if state.is_child_turn:
             action = child.policy(state)
