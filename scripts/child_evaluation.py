@@ -21,7 +21,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.style
 from multiprocessing import Pool
-from copy import deepcopy
 
 # TODO create child_minmax option
 
@@ -55,10 +54,17 @@ def play_game(robot, child, isTraining=True):
                 # examples = robot.give_explanation()
                 # child.explanation_update(examples)
 
-        old_state = deepcopy(state)
+        old_state_idx = GameState.get_state_id(state)
+        old_score = state.get_score('child')
         state, reward, done, info = state.make_action(action)
+        new_state_idx = GameState.get_state_id(state)
         if isTraining:
-            child.update(old_state, action, state)
+            # reward function
+            if old_score < state.get_score('child'):
+                reward = 1
+            else:
+                reward = -1
+            child.update(old_state_idx, action, reward, new_state_idx)
 
     if state.is_child_turn and state.isFinished():
         outcome = -1
@@ -109,13 +115,16 @@ def process(robot, child):
 
 
 if __name__ == "__main__":
-    with Pool(processes=5) as pool:
-        game_tuples = [(Robot(), ChildQlearning())] * 5
-        performance_list = pool.starmap(process, game_tuples)
-        average_performance = sum(performance_list)/len(performance_list)
-        msg_average = ("QLearning need {0} episodes on average",
-                       " to be as good as the minmax.")
-        print(msg_average.format(average_performance))
+    for _ in tqdm(range(2)):
+        process(Robot(), ChildQlearning())
+
+    # with Pool(processes=5) as pool:
+    #     game_tuples = [(Robot(), ChildQlearning())] * 5
+    #     performance_list = pool.starmap(process, game_tuples)
+    #     average_performance = sum(performance_list)/len(performance_list)
+    #     msg_average = ("QLearning need {0} episodes on average",
+    #                    " to be as good as the minmax.")
+    #     print(msg_average.format(average_performance))
 
     # visualize performance list
     # create joint plot

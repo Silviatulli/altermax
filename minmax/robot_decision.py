@@ -43,9 +43,10 @@ class Robot(object):
         # consider state, action and reward
 
         # reward function
+        old_score = state.get_score('child')
         new_state = deepcopy(state)
         new_state.make_action(action)
-        if state.get_score('child') < new_state.get_score('child'):
+        if state.get_score('child') < old_score:
             reward = 1
         else:
             reward = -1
