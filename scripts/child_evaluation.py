@@ -20,7 +20,7 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.style
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 
 # TODO create child_minmax option
 
@@ -30,8 +30,7 @@ def play_game(robot, child, isTraining=True):
     num_actions = 0
 
     while not state.isFinished():
-
-        valid_actions = state.valid_actions()
+            valid_actions = state.valid_actions()
 
         if state.is_child_turn:
             action = child.policy(state)
@@ -115,16 +114,13 @@ def process(robot, child):
 
 
 if __name__ == "__main__":
-    for _ in tqdm(range(2)):
-        process(Robot(), ChildQlearning())
-
-    # with Pool(processes=5) as pool:
-    #     game_tuples = [(Robot(), ChildQlearning())] * 5
-    #     performance_list = pool.starmap(process, game_tuples)
-    #     average_performance = sum(performance_list)/len(performance_list)
-    #     msg_average = ("QLearning need {0} episodes on average",
-    #                    " to be as good as the minmax.")
-    #     print(msg_average.format(average_performance))
+    with Pool(processes=cpu_count() - 2) as pool:
+        game_tuples = [(Robot(), ChildQlearning())] * 5
+        performance_list = pool.starmap(process, game_tuples)
+        average_performance = sum(performance_list)/len(performance_list)
+        msg_average = ("QLearning need {0} episodes on average"
+                       " to be as good as the minmax.")
+        print(msg_average.format(average_performance))
 
     # visualize performance list
     # create joint plot

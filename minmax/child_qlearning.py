@@ -14,18 +14,19 @@ class ChildQlearning(object):
         return q_value
 
     def policy(self, state):
+        state_idx = GameState.get_state_id(state)
         valid_actions = state.valid_actions()
         best_action = valid_actions[0]
-        max_value = self.Q(state, best_action)
+        max_value = self.Q(state_idx, best_action)
         epsilon = 0.15
         for action in valid_actions:
-            if max_value < self.Q(state, action):
-                max_value = self.Q(state, action)
+            if max_value < self.Q(state_idx, action):
+                max_value = self.Q(state_idx, action)
                 best_action = action
 
         best_actions = list()
         for action in valid_actions:
-            if max_value == self.Q(state, action):
+            if max_value == self.Q(state_idx, action):
                 best_actions.append(action)
 
         # choose the best action
@@ -58,14 +59,13 @@ class ChildQlearning(object):
         # update q-table
 
         new_state_idx = GameState.get_state_id(new_state)
+        state_idx = GameState.get_state_id(state)
         alpha = 0.8
         gamma = 0.99
-        q_value = (1-alpha)*self.Q(state, action) + alpha * \
+        q_value = (1-alpha)*self.Q(state_idx, action) + alpha * \
             (reward + gamma * np.max(self.q_table[new_state_idx, :]))
 
-        state_id = GameState.get_state_id(state)
-
-        self.q_table[state_id, action] = q_value
+        self.q_table[state_idx, action] = q_value
         return
 
     def explanation_update(self, examples):
