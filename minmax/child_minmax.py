@@ -25,7 +25,7 @@ class ChildMinmax(object):
         idx = np.random.randint(len(best_actions))
         return best_actions[idx]
 
-    def update(self, state, action, new_state):
+    def update(self, state, action, reward, new_state_idx):
         return
 
     def demonstration_update(self, state, action, reward, new_state):

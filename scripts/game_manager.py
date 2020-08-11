@@ -7,6 +7,7 @@ from minmax.robot_decision import Robot
 from minmax.child_decision import Child
 # from robot_manager import RobotManager
 import time
+from copy import deepcopy
 
 
 def play_game(robot, child):
@@ -28,10 +29,16 @@ def play_game(robot, child):
             action = robot.policy(state)
             robot.give_demonstration(action, state)
 
-        old_state = state
+        old_state = deepcopy(state)
         print(GameState.get_state_id(state))
         state, reward, done, info = state.make_action(action)
-        child.update(old_state, action, state)
+
+        # reward function
+        if old_state.get_score('child') < state.get_score('child'):
+            reward = 1
+        else:
+            reward = -1
+        child.update(old_state, action, reward, state)
 
     visualization.update(state)
     time.sleep(1.5)
