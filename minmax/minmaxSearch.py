@@ -1,4 +1,7 @@
-from game_model import GameState
+from minmax.game_model import GameState
+import functools
+from copy import deepcopy
+
 
 class Node(GameState):
     def __init__(self, is_child_turn=None, balls=None):
@@ -7,7 +10,7 @@ class Node(GameState):
         else:
             self.is_child_turn = is_child_turn
             self.balls = balls
-            
+
     def score(self):
         if not self.is_child_turn and self.isFinished():
             return 1
@@ -15,18 +18,21 @@ class Node(GameState):
             return -1
         else:
             return 0
-    
+
     def children(self):
         nodes = list()
 
-        #populate tree
+        # populate tree
         for valid_action in self.valid_actions():
-            new_state = self.make_action(valid_action[0], valid_action[1])
-            node = Node(new_state.is_child_turn, new_state.balls)
-            nodes.append(node)
-            
+            env_copy = deepcopy(self)
+            env_copy.make_action(valid_action)
+            # node = Node(env_copy.is_child_turn, env_copy.balls)
+            nodes.append(env_copy)
+
         return nodes
 
+
+@functools.lru_cache(maxsize=int(5e5), typed=False)
 def minimax(node, depth):
     score = node.score()
     children = node.children()
@@ -47,18 +53,23 @@ def minimax(node, depth):
             value = min(value, minimax(child, depth - 1))
         return value
 
+
 def V(state):
     node = Node(is_child_turn=state.is_child_turn, balls=state.balls)
     value = minimax(node, 3)
     return value
 
+
+@functools.lru_cache(maxsize=int(5e5), typed=False)
 def Q(state, action):
-    action, ball_id = action
-    new_state = state.make_action(action, ball_id)
-    q_value = V(new_state)
+    action = action
+    env_copy = deepcopy(state)
+    env_copy.make_action(action)
+    q_value = V(env_copy)
     return q_value
-    
+
+
 if __name__ == "__main__":
     node = Node()
-    value = minimax(node, 3)
+    value = minimax(node, 6)
     print(value)

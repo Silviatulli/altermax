@@ -1,27 +1,17 @@
 import numpy as np
-from game_model import GameState
-
+from minmax.game_model import GameState
 
 
 class Child(object):
-    #TODO: 
-    #      Representation of relevant data:
-    #      q table
-    #
-    #      Things your code needs to be able to do:(features)
-    #      ability to update the child
-    #      perform an action
 
     def __init__(self):
         num_states = (12 * 12)**2 * 2
         self.q_table = np.zeros((num_states, 16))
 
     def Q(self, state, action):
-        action_name, ball_id = action
-        action_id = GameState.get_action_id(action_name, ball_id)
         state_id = GameState.get_state_id(state)
-        q_value = self.q_table[state_id, action_id]
-    
+        q_value = self.q_table[state_id, action]
+
         return q_value
 
     def policy(self, state):
@@ -40,27 +30,23 @@ class Child(object):
 
         idx = np.random.randint(len(best_actions))
         return best_actions[idx]
-    
-    def update(self, state, action, new_state):
+
+    def update(self, state, action, reward, new_state):
         # reward function
         if state.get_score('child') < new_state.get_score('child'):
             reward = 1
         else:
             reward = -1
 
-        # import pdb; pdb.set_trace()
-
         # update q-table
         new_state_idx = GameState.get_state_id(new_state)
         alpha = 0.8
         gamma = 0.99
-        q_value = (1-alpha)*self.Q(state,action) + alpha * (reward + gamma * np.max(self.q_table[new_state_idx, :]))
-        
+        V_star = np.max(self.q_table[new_state_idx, :])
+        q_sa = self.Q(state, action)
+        q_value = (1-alpha) * q_sa + alpha * (reward + gamma * V_star)
+
         state_id = GameState.get_state_id(state)
-        action_name, ball_id = action
-        action_id = GameState.get_action_id(action_name, ball_id)
-        
-        self.q_table[state_id, action_id] = q_value
-        print(q_value)
-        
-        return
+
+
+        self.q_table[state_id, action] = q_value
