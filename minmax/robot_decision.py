@@ -15,12 +15,13 @@ class Robot(object):
         # an action in the game
         valid_actions = state.valid_actions()
         best_action = valid_actions[0]
-
+        
         max_value = Q(state, best_action)
         for action in valid_actions:
             if max_value < Q(state, action):
                 max_value = Q(state, action)
                 best_action = action
+
 
         best_actions = list()
         for action in valid_actions:
@@ -28,7 +29,11 @@ class Robot(object):
                 best_actions.append(action)
 
         idx = np.random.randint(len(best_actions))
+
+        
         return best_actions[idx]
+
+
 
     def update_POMDP(self, outcome, num_actions):
         # changes the POMPD based on the child actions
@@ -41,17 +46,75 @@ class Robot(object):
 
         # TODO: transform the explanation into a demonstration
         # consider state, action and reward
+        # reward function - modify here and in the child_evaluation
 
-        # reward function
+
+        # make the reward function more sophisticated
+        # from the current state, perform an action and store the reward
+        current_state = deepcopy(state)
+        current_state.make_action(action)
+        rewards = []
+        if state.get_score('child') < old_score:
+            reward = 1
+        else:
+            reward = -1
+        
+        rewards.append(reward)
+
+        # use the minmax to compute the reward that you could get from performing a bunch of other actions (3(?))
+        
+        # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
+
+
+
+
         old_score = state.get_score('child')
         new_state = deepcopy(state)
         new_state.make_action(action)
+
         if state.get_score('child') < old_score:
             reward = 1
         else:
             reward = -1
 
         return (state, action, reward, new_state)
+
+
+    def give_other_actions(self, action, state):
+
+        # make the reward function more sophisticated
+        # from the current state, perform an action and store the score
+        current_state = deepcopy(state)
+        current_state.make_action(action)
+        current_score = state.get_score('child')
+
+        # use the minmax to compute the score that you could get from performing a bunch of other actions (3(?))
+        # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
+        valid_actions = state.valid_actions()
+        action_idx = np.randint(len(valid_actions), shape=(3,))
+        other_actions = valid_actions[action_idx]
+        scores = []
+        for other_action in other_actions:
+            current_state = deepcopy(state)
+            current_state.make_action(other_action)
+            score = current_state.get_score('child')
+            scores.append(score)
+
+        # TODO: generate a NL string in the form of "If I would take action A instead of action B I would get this amount ---"
+        # check f-string
+        # 
+
+
+        score = np.array(score)
+        rewards = current_score - score
+        order = np.argsort(rewards)
+        other_actions = other_actions[order]
+        rewards = rewards[order]
+        other_actions_matrix = np.column_stack((other_action, rewards))
+        print(other_action, rewards)
+
+        return  other_actions_matrix
+
 
     def give_explanation(self):
         array_shape = 12*12*12*12*2
