@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import numpy as np
 from minmax.game_model import GameState
-from minmax import Q
+from minmax.minmaxSearch import Q
 from minmax.interface import View
 from minmax.robot_decision import Robot
-from minmax.child_decision import Child
+from minmax.child_qlearning import ChildQlearning
 # from robot_manager import RobotManager
 import time
 from copy import deepcopy
@@ -54,9 +54,21 @@ def play_game(robot, child):
 if __name__ == "__main__":
     number_of_games = 3
     robot = Robot()
-    child = Child()
+    child = ChildQlearning()
     # robot = RobotManager()
 
     for game in range(number_of_games):
         outcome, num_actions = play_game(robot, child)
+        
+        #check this
         robot.update_POMDP(outcome, num_actions)
+
+
+#TODO:
+#experiment with humans - update this file 
+#the participants observe the two agents playing
+#one of the agent generate written explanations that are showed in the interface - create a method for generating that
+##
+##
+##
+#embed this into a questionnaire

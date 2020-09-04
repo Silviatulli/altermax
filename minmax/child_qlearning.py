@@ -2,6 +2,8 @@ import numpy as np
 import random
 from minmax import GameState, Action
 
+#add reward function for the child interacting with the environment
+# generate new dataset for training
 
 class ChildQlearning(object):
     def __init__(self):
@@ -69,4 +71,8 @@ class ChildQlearning(object):
         return
 
     def explanation_update(self, examples):
+        return
+
+
+    def other_actions_update(self, other_actions_matrix):
         return

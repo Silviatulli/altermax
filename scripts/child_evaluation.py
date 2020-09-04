@@ -53,19 +53,30 @@ def play_game(robot, child, isTraining=True):
                 # examples = robot.give_explanation()
                 # child.explanation_update(examples)
 
+                other_actions = robot.give_other_actions(action,state)
+                child.other_actions_update(other_actions)
+
         old_state_idx = GameState.get_state_id(state)
         old_score = state.get_score('child')
         state, reward, done, info = state.make_action(action)
         new_state_idx = GameState.get_state_id(state)
+
+        # modify reward function here and in the robot decision
+        
         if isTraining:
             # reward function
-            if old_score < state.get_score('child'):
-                reward = 1
-            else:
-                reward = -1
+            reward = old_score - state.get_score('child')
+            # if old_score < state.get_score('child'):
+            #     reward = 1
+            # else:
+            #     reward = -1
+            
+            # update the child model with a consistent reward function for all the updates
+            # otherwise we are doing reward shaping that is not our current focus
+            
             child.update(old_state_idx, action, reward, new_state_idx)
-
     if state.is_child_turn and state.isFinished():
+
         outcome = -1
     elif not state.is_child_turn and state.isFinished():
         outcome = 1
@@ -93,9 +104,6 @@ def evaluate(robot, child):
     win_rate_child = win * 1.0/num_episodes
     return win_rate_child
 
-# TODO:
-# print rewards for child_minmax and child_qlearning
-# plot rewards per time steps
 
 
 def process(robot, child):
@@ -128,3 +136,18 @@ if __name__ == "__main__":
     # for game in range(number_of_games):
     #     outcome, num_actions = play_game(robot,child_qlearning)
     #     robot.update_POMDP(outcome, num_actions)
+
+    # visualize performance list
+    # create joint plot
+
+    # for game in range(number_of_games):
+    #     outcome, num_actions = play_game(robot,child_qlearning)
+    #     robot.update_POMDP(outcome, num_actions)
+
+    # visualize performance list
+    # create joint plot
+
+    # for game in range(number_of_games):
+    #     outcome, num_actions = play_game(robot,child_qlearning)
+    #     robot.update_POMDP(outcome, num_actions)
+

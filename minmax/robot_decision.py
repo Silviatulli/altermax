@@ -40,7 +40,6 @@ class Robot(object):
         return
 
     def give_demonstration(self, action, state):
-
         # given the current state of the child makes the robot selects
         # an action/explanation count number of turns
 
@@ -48,34 +47,16 @@ class Robot(object):
         # consider state, action and reward
         # reward function - modify here and in the child_evaluation
 
-
         # make the reward function more sophisticated
         # from the current state, perform an action and store the reward
-        current_state = deepcopy(state)
-        current_state.make_action(action)
-        rewards = []
-        if state.get_score('child') < old_score:
-            reward = 1
-        else:
-            reward = -1
-        
-        rewards.append(reward)
-
         # use the minmax to compute the reward that you could get from performing a bunch of other actions (3(?))
-        
         # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
-
-
-
 
         old_score = state.get_score('child')
         new_state = deepcopy(state)
         new_state.make_action(action)
 
-        if state.get_score('child') < old_score:
-            reward = 1
-        else:
-            reward = -1
+        reward = old_score - state.get_score('child')
 
         return (state, action, reward, new_state)
 
@@ -87,11 +68,12 @@ class Robot(object):
         current_state = deepcopy(state)
         current_state.make_action(action)
         current_score = state.get_score('child')
+        print(state.get_score('child'), current_state.get_score('child'))
 
         # use the minmax to compute the score that you could get from performing a bunch of other actions (3(?))
         # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
-        valid_actions = state.valid_actions()
-        action_idx = np.randint(len(valid_actions), shape=(3,))
+        valid_actions = np.asarray(state.valid_actions())
+        action_idx = np.random.randint(len(valid_actions), size=3)
         other_actions = valid_actions[action_idx]
         scores = []
         for other_action in other_actions:
@@ -102,16 +84,16 @@ class Robot(object):
 
         # TODO: generate a NL string in the form of "If I would take action A instead of action B I would get this amount ---"
         # check f-string
-        # 
+        #print(f"By taking this action I get {current_score} points, while by doing {other_action[0]} I would get {rewards[0]} of difference")
 
 
-        score = np.array(score)
-        rewards = current_score - score
+        scores = np.array(scores)
+        rewards = current_score - scores
         order = np.argsort(rewards)
         other_actions = other_actions[order]
         rewards = rewards[order]
-        other_actions_matrix = np.column_stack((other_action, rewards))
-        print(other_action, rewards)
+        other_actions_matrix = np.column_stack((other_actions, rewards))
+        # print(other_actions, current_score, scores)
 
         return  other_actions_matrix
 
@@ -141,11 +123,11 @@ class Robot(object):
             robot_state = GameState.get_state(robot_state_idx)
             best_action = self.policy(robot_state)
             new_state, reward, done, info = robot_state.make_action(best_action)
-
-            if robot_state.get_score('child') < new_state.get_score('child'):
-                reward = 1
-            else:
-                reward = -1
+            reward = robot_state.get_score('child') - new_state.get_score('child')
+            # if robot_state.get_score('child') < new_state.get_score('child'):
+            #     reward = 1
+            # else:
+            #     reward = -1
 
             example = (robot_state, best_action, reward, new_state)
             examples.append(example)
