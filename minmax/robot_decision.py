@@ -65,10 +65,11 @@ class Robot(object):
 
         # make the reward function more sophisticated
         # from the current state, perform an action and store the score
+        old_score = state.get_score('child')
         current_state = deepcopy(state)
         current_state.make_action(action)
-        current_score = state.get_score('child')
-        print(state.get_score('child'), current_state.get_score('child'))
+        current_score = current_state.get_score('child')
+        print(old_score, current_score)
 
         # use the minmax to compute the score that you could get from performing a bunch of other actions (3(?))
         # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
