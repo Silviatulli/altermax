@@ -65,23 +65,28 @@ class Robot(object):
 
         # make the reward function more sophisticated
         # from the current state, perform an action and store the score
-        old_score = state.get_score('child')
         current_state = deepcopy(state)
         current_state.make_action(action)
-        current_score = current_state.get_score('child')
-        print(old_score, current_score)
+        current_score = current_state.get_score('robot')
 
         # use the minmax to compute the score that you could get from performing a bunch of other actions (3(?))
         # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
         valid_actions = np.asarray(state.valid_actions())
-        action_idx = np.random.randint(len(valid_actions), size=3)
-        other_actions = valid_actions[action_idx]
+        valid_actions = valid_actions[valid_actions != action]
+        other_actions = np.random.choice(valid_actions, size=3, replace=False)
         scores = []
         for other_action in other_actions:
             current_state = deepcopy(state)
             current_state.make_action(other_action)
-            score = current_state.get_score('child')
+            score = current_state.get_score('robot')
             scores.append(score)
+
+    
+        ## How do you deal with the opponent goal? Do the rewards make sense for the child? How? How do you reason about the robot action?
+        # when the robot makes an action the child should updates her q-table
+        # link child current state with child next state -
+        # How do you generalize over actions that are bad? - check work about reasoning over opponent action 
+        # (((Consider a different scenario where the agents are cooperating))) 
 
         # TODO: generate a NL string in the form of "If I would take action A instead of action B I would get this amount ---"
         # check f-string
@@ -94,7 +99,7 @@ class Robot(object):
         other_actions = other_actions[order]
         rewards = rewards[order]
         other_actions_matrix = np.column_stack((other_actions, rewards))
-        # print(other_actions, current_score, scores)
+        print(other_actions, rewards)
 
         return  other_actions_matrix
 
