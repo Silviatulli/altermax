@@ -73,13 +73,14 @@ class Robot(object):
         # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
         valid_actions = np.asarray(state.valid_actions())
         valid_actions = valid_actions[valid_actions != action]
-        other_actions = np.random.choice(valid_actions, size=3, replace=False)
+        other_actions = np.random.choice(valid_actions, size=3, replace=True)   
         scores = []
         for other_action in other_actions:
-            current_state = deepcopy(state)
-            current_state.make_action(other_action)
-            score = current_state.get_score('robot')
-            scores.append(score)
+            if len(other_actions) == 3:
+                current_state = deepcopy(state)
+                current_state.make_action(other_action)
+                score = current_state.get_score('robot')
+                scores.append(score)
 
     
         ## How do you deal with the opponent goal? Do the rewards make sense for the child? How? How do you reason about the robot action?
@@ -99,7 +100,7 @@ class Robot(object):
         other_actions = other_actions[order]
         rewards = rewards[order]
         other_actions_matrix = np.column_stack((other_actions, rewards))
-        print(other_actions, rewards)
+        #print(other_actions, rewards)
 
         return  other_actions_matrix
 
