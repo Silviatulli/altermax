@@ -73,7 +73,7 @@ class Robot(object):
         # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
         valid_actions = np.asarray(state.valid_actions())
         valid_actions = valid_actions[valid_actions != action]
-        other_actions = np.random.choice(valid_actions, size=3, replace=True)   
+        other_actions = np.random.choice(valid_actions, size=3,replace=True)   
         scores = []
         for other_action in other_actions:
             if len(other_actions) == 3:
@@ -84,7 +84,7 @@ class Robot(object):
 
     
         ## How do you deal with the opponent goal? Do the rewards make sense for the child? How? How do you reason about the robot action?
-        # when the robot makes an action the child should updates her q-table
+        # when the robot makes an action the child should updates his q-table
         # link child current state with child next state -
         # How do you generalize over actions that are bad? - check work about reasoning over opponent action 
         # (((Consider a different scenario where the agents are cooperating))) 
@@ -100,14 +100,17 @@ class Robot(object):
         other_actions = other_actions[order]
         rewards = rewards[order]
         other_actions_matrix = np.column_stack((other_actions, rewards))
-        #print(other_actions, rewards)
+        print(other_actions, rewards)
 
         return  other_actions_matrix
 
+### when is it necessary to give an explaination and when is it better to give examples?
+## how many sample h
 
     def give_explanation(self):
         array_shape = 12*12*12*12*2
-
+        ## select states where the difference between the child q values and robot q values
+        ## curriculum learning 
         valid_states = []
         num_examples = 10
         while len(valid_states) < num_examples:
