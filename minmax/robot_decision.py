@@ -63,24 +63,51 @@ class Robot(object):
 
     def give_other_actions(self, action, state):
 
-        # make the reward function more sophisticated
-        # from the current state, perform an action and store the score
-        current_state = deepcopy(state)
-        current_state.make_action(action)
-        current_score = current_state.get_score('robot')
+    # given the current state of the child makes the robot selects
+        # an action/explanation count number of turns
 
-        # use the minmax to compute the score that you could get from performing a bunch of other actions (3(?))
+        # TODO: transform the explanation into a demonstration
+        # consider state, action and reward
+        # reward function - modify here and in the child_evaluation
+
+        # make the reward function more sophisticated
+        # from the current state, perform an action and store the reward
+        # use the minmax to compute the reward that you could get from performing a bunch of other actions (3(?))
         # evaluate the goodness of the performed action giving a reward with respect to the other action outputs
-        valid_actions = np.asarray(state.valid_actions())
-        valid_actions = valid_actions[valid_actions != action]
-        other_actions = np.random.choice(valid_actions, size=3,replace=True)   
+
+        old_score = state.get_score('child')
+        new_state = deepcopy(state)
+        new_state.make_action(action)
+
+        reward = old_score - state.get_score('child')
+
+        return (state, action, reward, new_state)
+
+
+    def give_other_actions(self, action, state):
+        valid_actions = state.valid_actions()
         scores = []
-        for other_action in other_actions:
-            if len(other_actions) == 3:
-                current_state = deepcopy(state)
-                current_state.make_action(other_action)
-                score = current_state.get_score('robot')
-                scores.append(score)
+        for iter_action in valid_actions:
+            current_state = deepcopy(state)
+            current_state.make_action(iter_action)
+            score = current_state.get_score('robot')
+            scores.append(score)
+
+        action_idx = valid_actions.index(action)
+        current_score = scores.pop(action_idx)
+        valid_actions.pop(action_idx)
+
+        scores = np.asarray(scores)
+        valid_actions = np.asarray(valid_actions)
+
+        if valid_actions.size > 3:
+            action_idx = np.random.choice(valid_actions.size, size=3, replace=False)
+            other_actions = valid_actions[action_idx]
+            scores = scores[action_idx]
+        elif valid_actions.size == 0:
+            return np.array([])
+        else:
+            other_actions = valid_actions
 
     
         ## How do you deal with the opponent goal? Do the rewards make sense for the child? How? How do you reason about the robot action?
