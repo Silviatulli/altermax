@@ -17,7 +17,7 @@ def play_game(robot, child):
 
     while not state.isFinished():
         visualization.update(state)
-        # time.sleep(0.5)
+        time.sleep(3)
 
         valid_actions = state.valid_actions()
 
@@ -59,16 +59,8 @@ if __name__ == "__main__":
 
     for game in range(number_of_games):
         outcome, num_actions = play_game(robot, child)
-        
         #check this
         robot.update_POMDP(outcome, num_actions)
 
 
-#TODO:
-#experiment with humans - update this file 
-#the participants observe the two agents playing
-#one of the agent generate written explanations that are showed in the interface - create a method for generating that
-##
-##
-##
-#embed this into a questionnaire
+
