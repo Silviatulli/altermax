@@ -2,6 +2,8 @@
 import pygame as pg
 import pygame.locals
 import numpy as np
+from minmax.game_model import GameState
+from minmax.robot_decision import Robot
 
 
 class View(object):
@@ -158,23 +160,41 @@ class View(object):
                     text = font.render('B', True, (255, 255, 255))
                     self.surface.blit(text, (position_x-10, position_y-10))
 
-    def draw_outcome(self, is_child_turn, is_finished):
+    def draw_outcome(self, is_child_turn):
         font = pg.font.SysFont("Roboto", 85)
         position_x = 800
         position_y = 700
+        game_state = GameState()
+        is_finished =  game_state.isFinished()
+        print(is_finished)
 
+        ### THIS IS NOT DISPLAYING THE OUTPUT
         if not is_child_turn and is_finished:
             text = font.render('Child Wins', True, (0, 0, 0))
             self.surface.blit(text, (position_x, position_y))
         elif is_child_turn and is_finished:
             text = font.render('Robot Wins', True, (0, 0, 0))
             self.surface.blit(text, (position_x, position_y))
+    
+    def draw_explanation(self, is_child_turn):
+        font = pg.font.SysFont("Roboto", 85)
+        position_x = 800
+        position_y = 900
+
+        #TODO: parse robot explanation
+        #exp = Robot().give_other_actions
+        #print(exp)
+
+        if not is_child_turn:
+            text = font.render('explanation', True, (0, 0, 0))
+            self.surface.blit(text, (position_x, position_y))
 
     def update(self, game_state):
         self.draw_empty_board()
         self.draw_score('robot', game_state.get_score('robot'))
         self.draw_score('child', game_state.get_score('child'))
-        self.draw_outcome(game_state.is_child_turn, game_state.isFinished())
+        self.draw_outcome(game_state.is_child_turn)
+        self.draw_explanation(game_state.is_child_turn)
         self.draw_balls(game_state.balls)
         pg.display.update()
 
