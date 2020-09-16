@@ -2,9 +2,6 @@ import numpy as np
 import random
 from minmax import GameState, Action
 
-#add reward function for the child interacting with the environment
-# generate new dataset for training
-
 class ChildQlearning(object):
     def __init__(self):
         num_states = (12 * 12)**2 * 2
@@ -31,7 +28,6 @@ class ChildQlearning(object):
             if max_value == self.Q(state_idx, action):
                 best_actions.append(action)
 
-        # choose the best action
         if np.random.rand() <= epsilon:
             idx = np.random.randint(len(valid_actions))
             action = valid_actions[idx]
@@ -53,13 +49,6 @@ class ChildQlearning(object):
         return
 
     def demonstration_update(self, state, action, reward, new_state):
-        # TODO: update the q-table when the robot makes an action
-        # import robot decision
-        # retrieve robot state, action and reward
-        # translate the robot state, action and reward in useful
-        # information (q values)
-        # update q-table
-
         new_state_idx = GameState.get_state_id(new_state)
         state_idx = GameState.get_state_id(state)
         alpha = 0.8
@@ -70,7 +59,7 @@ class ChildQlearning(object):
         self.q_table[state_idx, action] = q_value
         return
 
-    def explanation_update(self, examples):
+    def examples_update(self, examples):
         return
 
 
