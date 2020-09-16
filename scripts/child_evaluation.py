@@ -1,17 +1,3 @@
-# relative - comparing two policies - performance estimate of the child model
-# import the modules: child decision and robot decision
-# define a policy (q-learning)
-# define optimal policy performance (performance metrics)
-# compare number of win percentage for a x episodes (roll out policies
-#  - compute the accumulated rewards - minmax child vs qlearning child)
-# in this way we have a baseline for the number of games we need to
-# play
-# define train steps: set the number of episodes (how many times you want
-# the child plays the game)
-# play the game x times
-# save the q values
-# check how many times the q values are updated
-
 from minmax.child_minmax import ChildMinmax
 from minmax.child_qlearning import ChildQlearning
 from minmax.robot_decision import Robot
@@ -19,10 +5,8 @@ from minmax.game_model import GameState
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.style
+import matplotlib.cm as cm
 from multiprocessing import Pool, cpu_count
-
-# TODO create child_minmax option
 
 
 def play_game(robot, child, isTraining=True):
@@ -50,41 +34,35 @@ def play_game(robot, child, isTraining=True):
                                            demonstration_reward,
                                            demonstration_new_state)
 
-                # examples = robot.give_explanation()
-                # child.explanation_update(examples)
+                # examples = robot.give_examples()
+                # child.examples_update(examples)
 
                 other_actions = robot.give_other_actions(action,state)
                 child.other_actions_update(other_actions)
+
+
+
+
 
         old_state_idx = GameState.get_state_id(state)
         old_score = state.get_score('child')
         state, reward, done, info = state.make_action(action)
         new_state_idx = GameState.get_state_id(state)
-
-        # modify reward function here and in the robot decision
         
         if isTraining:
-            # reward function
-            reward = old_score - state.get_score('child')
-            # if old_score < state.get_score('child'):
-            #     reward = 1
-            # else:
-            #     reward = -1
-            
-            # update the child model with a consistent reward function for all the updates
-            # otherwise we are doing reward shaping that is not our current focus
-            
+            reward = old_score - state.get_score('child')   
             child.update(old_state_idx, action, reward, new_state_idx)
     if state.is_child_turn and state.isFinished():
 
         outcome = -1
     elif not state.is_child_turn and state.isFinished():
         outcome = 1
+    
+
+
+
 
     return outcome, num_actions
-
-
-# keyword argument - optional or extra arguments
 
 
 def train(robot, child, num_episodes=1):
@@ -102,6 +80,7 @@ def evaluate(robot, child):
         if outcome == 1:
             win += 1
     win_rate_child = win * 1.0/num_episodes
+
     return win_rate_child
 
 
@@ -117,6 +96,10 @@ def process(robot, child):
         games_played += episodes_between_evaluations
         win_rate_child = evaluate(robot, child)
         print("QLearningChild performance: {0}".format(win_rate_child))
+    
+    other_actions_matrix = robot.other_actions
+    plt.imshow(other_actions_matrix)
+    plt.show()
 
     return games_played
 
@@ -125,29 +108,9 @@ if __name__ == "__main__":
     with Pool(processes=cpu_count() - 2) as pool:
         game_tuples = [(Robot(), ChildQlearning())] * 5
         performance_list = pool.starmap(process, game_tuples)
+
         average_performance = sum(performance_list)/len(performance_list)
         msg_average = ("QLearning need {0} episodes on average"
                        " to be as good as the minmax.")
         print(msg_average.format(average_performance))
-
-    # visualize performance list
-    # create joint plot
-
-    # for game in range(number_of_games):
-    #     outcome, num_actions = play_game(robot,child_qlearning)
-    #     robot.update_POMDP(outcome, num_actions)
-
-    # visualize performance list
-    # create joint plot
-
-    # for game in range(number_of_games):
-    #     outcome, num_actions = play_game(robot,child_qlearning)
-    #     robot.update_POMDP(outcome, num_actions)
-
-    # visualize performance list
-    # create joint plot
-
-    # for game in range(number_of_games):
-    #     outcome, num_actions = play_game(robot,child_qlearning)
-    #     robot.update_POMDP(outcome, num_actions)
 
