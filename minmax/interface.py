@@ -4,7 +4,8 @@ import pygame.locals
 import numpy as np
 from minmax.game_model import GameState
 from minmax.robot_decision import Robot
-
+import os
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 class View(object):
     def __init__(self):
@@ -180,7 +181,8 @@ class View(object):
         font = pg.font.SysFont("Roboto", 85)
         position_x = 800
         position_y = 900
-
+        #robot = Robot()
+        #text = robot.give_text
         #TODO: parse robot explanation
         #exp = Robot().give_other_actions
         #print(exp)
