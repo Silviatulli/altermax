@@ -6,6 +6,7 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.style
+import json
 
 
 class Robot(object):
@@ -30,8 +31,6 @@ class Robot(object):
 
         
         return best_actions[idx]
-
-
 
     def update_POMDP(self, outcome, num_actions):
         return
@@ -78,11 +77,36 @@ class Robot(object):
         other_actions = other_actions[order]
         rewards = rewards[order]
         other_actions_matrix = np.column_stack((other_actions, rewards))
-        print(other_actions, rewards)
-
-
         return  other_actions_matrix
 
+    # def give_text(self, current_score, scores, action, other_actions, rewards):
+    #     action_dict = {
+    #          0: 'moving the ball 1 diagonally down left', 
+    #          1: 'moving the ball 1 down',
+    #          2: 'moving the ball 1 diagonally down right',
+    #          3: 'moving the ball 1 left',
+    #          4: 'not moving ball 1',
+    #          5: 'moving the ball 1 right',
+    #          6: 'moving the ball 1 diagonally up left',
+    #          7: 'moving the ball 1 up',
+    #          8: 'moving the ball 1 diagonally up right',
+    #          9: 'moving the ball 2 diagonally down left',
+    #          10: 'moving the ball 2 down',
+    #          11: 'moving the ball 2 down right',
+    #          12: 'moving the ball 2 left',
+    #          13: 'not moving ball 2',
+    #          14: 'moving the ball 2 right',
+    #          15: 'moving the ball 2 diagonally up left',
+    #          16: 'moving the ball 2 up',
+    #          17: 'moving the ball 2 diagonally up right'}
+         
+    #     if current_score > scores[0]:
+    #         exp = f"By {action_dict[action]} I get {current_score} points, while by {action_dict[other_actions[0]]} I would get points {abs(rewards[0])} less"
+    #     elif current_score < scores[0]:
+    #         exp = f"By {action_dict[action]} I get {current_score} points, while by {action_dict[other_actions[0]]} I would get points {abs(rewards[0])} more"
+    #     else:
+    #         exp = f"By {action_dict[action]} I get {current_score} points, and by {action_dict[other_actions[0]]} I would get the same amount of points"
+    #     return print(exp)
 
     def give_examples(self):
         array_shape = 12*12*12*12*2
@@ -113,3 +137,4 @@ class Robot(object):
             examples.append(example)
 
         return examples
+
