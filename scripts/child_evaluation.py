@@ -41,9 +41,6 @@ def play_game(robot, child, isTraining=True):
                 child.other_actions_update(other_actions)
 
 
-
-
-
         old_state_idx = GameState.get_state_id(state)
         old_score = state.get_score('child')
         state, reward, done, info = state.make_action(action)
@@ -53,15 +50,10 @@ def play_game(robot, child, isTraining=True):
             reward = old_score - state.get_score('child')   
             child.update(old_state_idx, action, reward, new_state_idx)
     if state.is_child_turn and state.isFinished():
-
         outcome = -1
     elif not state.is_child_turn and state.isFinished():
         outcome = 1
     
-
-
-
-
     return outcome, num_actions
 
 
@@ -97,9 +89,9 @@ def process(robot, child):
         win_rate_child = evaluate(robot, child)
         print("QLearningChild performance: {0}".format(win_rate_child))
     
-    other_actions_matrix = robot.other_actions
-    plt.imshow(other_actions_matrix)
-    plt.show()
+    #other_actions_matrix = robot.other_actions
+    #plt.imshow(other_actions_matrix)
+    #plt.show()
 
     return games_played
 
