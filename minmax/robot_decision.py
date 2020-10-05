@@ -7,10 +7,6 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.style
 import json
-<<<<<<< HEAD
-=======
-
->>>>>>> c06f2e42171a6e9519228198f1f9fa0f0f81fdf7
 
 class Robot(object):
 
