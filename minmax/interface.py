@@ -182,7 +182,7 @@ class View(object):
         robot = Robot()
         action = robot.policy(game_state)
         game_state, current_score, scores, action, other_actions, rewards = robot.give_text(action,game_state)
-        #exp = robot.give_text(current_score, scores, action, other_actions, rewards)
+
         action_dict = {
               0: 'moving the ball A diagonally down left', 
               1: 'moving the ball A down',
