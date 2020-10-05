@@ -211,7 +211,7 @@ class View(object):
         else:
             exp = f"By {action_dict[action]} I get {current_score} points, and by {action_dict[other_actions[0]]} I would get the same amount of points"
 
-        if is_child_turn:
+        if is_child_turn and current_score!=1000:
             text = font.render(exp, True, (0, 0, 0))
             self.surface.blit(text, (position_x, position_y))
 
