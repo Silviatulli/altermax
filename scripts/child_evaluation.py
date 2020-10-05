@@ -8,11 +8,9 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from multiprocessing import Pool, cpu_count
 
-
 def play_game(robot, child, isTraining=True):
     state = GameState()
     num_actions = 0
-
     while not state.isFinished():
         valid_actions = state.valid_actions()
 
@@ -34,11 +32,11 @@ def play_game(robot, child, isTraining=True):
                                            demonstration_reward,
                                            demonstration_new_state)
 
-                # examples = robot.give_examples()
-                # child.examples_update(examples)
+                examples = robot.give_examples()
+                child.examples_update(examples)
 
-                other_actions = robot.give_other_actions(action,state)
-                child.other_actions_update(other_actions)
+                #other_actions = robot.give_other_actions(action,state)
+                #child.other_actions_update(other_actions)
 
 
 
@@ -49,18 +47,16 @@ def play_game(robot, child, isTraining=True):
         state, reward, done, info = state.make_action(action)
         new_state_idx = GameState.get_state_id(state)
         
+
         if isTraining:
             reward = old_score - state.get_score('child')   
             child.update(old_state_idx, action, reward, new_state_idx)
+        
+            
     if state.is_child_turn and state.isFinished():
-
         outcome = -1
     elif not state.is_child_turn and state.isFinished():
         outcome = 1
-    
-
-
-
 
     return outcome, num_actions
 
@@ -97,9 +93,6 @@ def process(robot, child):
         win_rate_child = evaluate(robot, child)
         print("QLearningChild performance: {0}".format(win_rate_child))
     
-    other_actions_matrix = robot.other_actions
-    plt.imshow(other_actions_matrix)
-    plt.show()
 
     return games_played
 
@@ -113,4 +106,5 @@ if __name__ == "__main__":
         msg_average = ("QLearning need {0} episodes on average"
                        " to be as good as the minmax.")
         print(msg_average.format(average_performance))
+
 

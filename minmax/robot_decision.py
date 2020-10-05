@@ -6,7 +6,7 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.style
-
+import json
 
 class Robot(object):
 
@@ -84,12 +84,47 @@ class Robot(object):
         return  other_actions_matrix
 
 
+    def give_text(self, action, state):
+        valid_actions = state.valid_actions()
+        scores = []
+        for iter_action in valid_actions:
+            current_state = deepcopy(state)
+            current_state.make_action(iter_action)
+            score = current_state.get_score('robot')
+            scores.append(score)
+
+        action_idx = valid_actions.index(action)
+        current_score = scores.pop(action_idx)
+        valid_actions.pop(action_idx)
+
+        scores = np.asarray(scores)
+        valid_actions = np.asarray(valid_actions)
+
+        if valid_actions.size > 3:
+            action_idx = np.random.choice(valid_actions.size, size=3, replace=False)
+            other_actions = valid_actions[action_idx]
+            scores = scores[action_idx]
+        elif valid_actions.size == 0:
+            return np.array([])
+        else:
+            other_actions = valid_actions
+
+
+        scores = np.array(scores)
+        rewards = current_score - scores
+        order = np.argsort(rewards)
+        other_actions = other_actions[order]
+        rewards = rewards[order]
+        other_actions_matrix = np.column_stack((other_actions, rewards))
+
+        return state, current_score, scores, action, other_actions, rewards
+
     def give_examples(self):
         array_shape = 12*12*12*12*2
         valid_states = []
         num_examples = 10
         while len(valid_states) < num_examples:
-            print('generating samples')
+            #print('generating samples')
             candidate_states = np.random.randint(low=1,
                                                  high=array_shape,
                                                  size=10)
@@ -111,5 +146,11 @@ class Robot(object):
             reward = robot_state.get_score('child') - new_state.get_score('child')
             example = (robot_state, best_action, reward, new_state)
             examples.append(example)
+        
+
+        #json_file = json.dumps(str(examples))
+
+        #with open("json_file.json", "w") as file:
+            #file.write(json_file)
 
         return examples

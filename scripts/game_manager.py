@@ -4,7 +4,7 @@ from minmax.game_model import GameState
 from minmax.minmaxSearch import Q
 from minmax.interface import View
 from minmax.robot_decision import Robot
-from minmax.child_qlearning import ChildQlearning
+from minmax.child_minmax import ChildMinmax
 # from robot_manager import RobotManager
 import time
 from copy import deepcopy
@@ -54,7 +54,7 @@ def play_game(robot, child):
 if __name__ == "__main__":
     number_of_games = 3
     robot = Robot()
-    child = ChildQlearning()
+    child = ChildMinmax()
     # robot = RobotManager()
 
     for game in range(number_of_games):

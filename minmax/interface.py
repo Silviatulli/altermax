@@ -163,7 +163,7 @@ class View(object):
     def draw_outcome(self, is_child_turn):
         font = pg.font.SysFont("Roboto", 85)
         position_x = 800
-        position_y = 700
+        position_y = 900
         game_state = GameState()
         is_finished =  game_state.isFinished()
         print(is_finished)
@@ -176,17 +176,44 @@ class View(object):
             text = font.render('Robot Wins', True, (0, 0, 0))
             self.surface.blit(text, (position_x, position_y))
     
-    def draw_explanation(self, is_child_turn):
-        font = pg.font.SysFont("Roboto", 85)
-        position_x = 800
+    def draw_explanation(self, is_child_turn, game_state):
+        font = pg.font.SysFont("Roboto", 45)
+        position_x = 50
         position_y = 900
+        robot = Robot()
+        action = robot.policy(game_state)
+        state, current_score, scores, action, other_actions, rewards = robot.give_text(action,game_state)
+        #exp = robot.give_text(current_score, scores, action, other_actions, rewards)
+        action_dict = {
+              0: 'moving the ball A diagonally down left', 
+              1: 'moving the ball A down',
+              2: 'moving the ball A diagonally down right',
+              3: 'moving the ball A left',
+              4: 'not moving ball A',
+              5: 'moving the ball A right',
+              6: 'moving the ball A diagonally up left',
+              7: 'moving the ball A up',
+              8: 'moving the ball A diagonally up right',
+              9: 'moving the ball B diagonally down left',
+              10: 'moving the ball B down',
+              11: 'moving the ball B down right',
+              12: 'moving the ball B left',
+              13: 'not moving ball B',
+              14: 'moving the ball B right',
+              15: 'moving the ball B diagonally up left',
+              16: 'moving the ball B up',
+              17: 'moving the ball B diagonally up right'
+              }
+        
+        if current_score > scores[0]:
+            exp = f"By {action_dict[action]} I get {current_score} points, while by {action_dict[other_actions[0]]} I would get points {abs(rewards[0])} less"
+        elif current_score < scores[0]:
+            exp = f"By {action_dict[action]} I get {current_score} points, while by {action_dict[other_actions[0]]} I would get points {abs(rewards[0])} more"
+        else:
+            exp = f"By {action_dict[action]} I get {current_score} points, and by {action_dict[other_actions[0]]} I would get the same amount of points"
 
-        #TODO: parse robot explanation
-        #exp = Robot().give_other_actions
-        #print(exp)
-
-        if not is_child_turn:
-            text = font.render('explanation', True, (0, 0, 0))
+        if is_child_turn:
+            text = font.render(exp, True, (0, 0, 0))
             self.surface.blit(text, (position_x, position_y))
 
     def update(self, game_state):
@@ -194,7 +221,7 @@ class View(object):
         self.draw_score('robot', game_state.get_score('robot'))
         self.draw_score('child', game_state.get_score('child'))
         self.draw_outcome(game_state.is_child_turn)
-        self.draw_explanation(game_state.is_child_turn)
+        self.draw_explanation(game_state.is_child_turn, game_state)
         self.draw_balls(game_state.balls)
         pg.display.update()
 
