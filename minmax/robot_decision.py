@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.style
 import json
+<<<<<<< HEAD
+=======
+
+>>>>>>> c06f2e42171a6e9519228198f1f9fa0f0f81fdf7
 
 class Robot(object):
 
@@ -30,8 +34,6 @@ class Robot(object):
 
         
         return best_actions[idx]
-
-
 
     def update_POMDP(self, outcome, num_actions):
         return
@@ -78,9 +80,6 @@ class Robot(object):
         other_actions = other_actions[order]
         rewards = rewards[order]
         other_actions_matrix = np.column_stack((other_actions, rewards))
-        print(other_actions, rewards)
-
-
         return  other_actions_matrix
 
 
@@ -154,3 +153,4 @@ class Robot(object):
             #file.write(json_file)
 
         return examples
+

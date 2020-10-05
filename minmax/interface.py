@@ -4,7 +4,8 @@ import pygame.locals
 import numpy as np
 from minmax.game_model import GameState
 from minmax.robot_decision import Robot
-
+import os
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 class View(object):
     def __init__(self):
