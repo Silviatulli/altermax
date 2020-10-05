@@ -4,8 +4,6 @@ import pygame.locals
 import numpy as np
 from minmax.game_model import GameState
 from minmax.robot_decision import Robot
-import os
-os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 class View(object):
     def __init__(self):
@@ -183,7 +181,7 @@ class View(object):
         position_y = 900
         robot = Robot()
         action = robot.policy(game_state)
-        state, current_score, scores, action, other_actions, rewards = robot.give_text(action,game_state)
+        game_state, current_score, scores, action, other_actions, rewards = robot.give_text(action,game_state)
         #exp = robot.give_text(current_score, scores, action, other_actions, rewards)
         action_dict = {
               0: 'moving the ball A diagonally down left', 
