@@ -177,8 +177,8 @@ class View(object):
     
     def draw_explanation(self, is_child_turn, game_state):
         font = pg.font.SysFont("Roboto", 45)
-        position_x = 50
-        position_y = 900
+        #position_x = 50
+        #position_y = 900
         robot = Robot()
         action = robot.policy(game_state)
         game_state, current_score, scores, action, other_actions, rewards = robot.give_text(action,game_state)
