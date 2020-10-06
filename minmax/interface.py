@@ -204,16 +204,28 @@ class View(object):
               17: 'moving the ball B diagonally up right'
               }
         
-        if current_score > scores[0]:
-            exp = f"By {action_dict[action]} I get {current_score} points, while by {action_dict[other_actions[0]]} I would get points {abs(rewards[0])} less"
-        elif current_score < scores[0]:
-            exp = f"By {action_dict[action]} I get {current_score} points, while by {action_dict[other_actions[0]]} I would get points {abs(rewards[0])} more"
+        if current_score > scores[1]:
+            exp = f"By {action_dict[action]} I get {current_score} points" 
+            exp1 = f"while by {action_dict[other_actions[2]]}"
+            exp2 = f"I would get points {abs(rewards[2])} less."
+
+        elif current_score < scores[1]:
+            exp = f"By {action_dict[action]} I get {current_score} points"
+            exp1 = f"while by {action_dict[other_actions[2]]}"
+            exp2 = f"I would get points {abs(rewards[2])} more."
+    
         else:
-            exp = f"By {action_dict[action]} I get {current_score} points, and by {action_dict[other_actions[0]]} I would get the same amount of points"
+            exp = f"By {action_dict[action]} I get {current_score} points"
+            exp1 = f"and by {action_dict[other_actions[2]]}"
+            exp2 = f"I would get the same amount of points."
 
         if is_child_turn and current_score!=1000:
             text = font.render(exp, True, (0, 0, 0))
-            self.surface.blit(text, (position_x, position_y))
+            self.surface.blit(text, (50, 700))
+            text1 = font.render(exp1, True, (0, 0, 0))
+            self.surface.blit(text1, (50, 750))
+            text2 = font.render(exp2, True, (0, 0, 0))
+            self.surface.blit(text2, (50, 800))
 
     def update(self, game_state):
         self.draw_empty_board()
