@@ -10,6 +10,9 @@ setup(
     packages=find_packages(),
     install_requires=[
         'numpy >= 1.18.2',
-        'matplotlib >= 3.2.1'
+        'matplotlib >= 3.2.1',
+        'minihex',
+        'gym',
+        'pygame'
     ]
 )
