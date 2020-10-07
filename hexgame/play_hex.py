@@ -122,13 +122,16 @@ class Board(object):
 
         positions = self.centers
 
-        left = (positions[0][0] - 2.5 * long_radius, positions[0][1])
-        right = (positions[-1][0] + 2.5 * long_radius, positions[-1][1])
-        top = (positions[board_size - 1][0],
-               positions[board_size - 1][1] - 2 * long_radius)
-        bottom = (positions[board_size - 1][0],
-                  positions[(board_size - 1) * board_size][1] + 2 * long_radius)
+        x_size = (board_size + board_size // 2) * long_radius
+        y_size = board_size * short_radius
+        x_offset = 1.5 * long_radius
+        y_offset = 1 * long_radius
+
         center = positions[len(positions) // 2]
+        left = (center[0] - x_size - x_offset, center[1])
+        right = (center[0] + x_size + x_offset, center[1])
+        top = (center[0], center[1] - y_size - y_offset)
+        bottom = (center[0], center[1] + y_size + y_offset)
 
         color = pygame.Color(config["GameWindow"]["player1_stone_color"])
         pygame.draw.polygon(surface, color, [left, top, center])
