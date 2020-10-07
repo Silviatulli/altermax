@@ -211,8 +211,8 @@ def main(config):
                 action = hover_idx
                 try:
                     state, reward, done, info = env.step(action)
-                except:
-                    # illegal move; ignore
+                except IndexError:
+                    # ignore illegal move
                     continue
 
         if done:
