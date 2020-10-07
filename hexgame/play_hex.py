@@ -93,7 +93,7 @@ class Hexagon(object):
 
 class Board(object):
     def __init__(self, config):
-        self.centers = self.board_positions(config)
+        self.centers = self._board_positions(config)
         self.hexagons = list()
         self.config = config
         for pos in self.centers:
@@ -105,7 +105,7 @@ class Board(object):
         bg_color = pygame.Color(self.config["GameWindow"]["background_color"])
         surface.fill(bg_color)
 
-        self.draw_game_border(surface)
+        self._draw_game_border(surface)
 
         for stone, hexagon in zip(occupancy, self.hexagons):
             if hexagon.contains(mouse_pos):
@@ -115,7 +115,7 @@ class Board(object):
 
             hexagon.draw(surface, mouse_pos, stone)
 
-    def draw_game_border(self, surface):
+    def _draw_game_border(self, surface):
         long_radius = int(self.config["Hexagon"]["radius"])
         short_radius = np.sqrt(3) / 2 * long_radius
         board_size = int(config["HexGame"]["board_size"])
@@ -147,7 +147,7 @@ class Board(object):
                 return idx
         return None
 
-    def board_positions(self, config):
+    def _board_positions(self, config):
         long_radius = int(config["Hexagon"]["radius"])
         short_radius = np.sqrt(3) / 2 * long_radius
         board_size = int(config["HexGame"]["board_size"])
