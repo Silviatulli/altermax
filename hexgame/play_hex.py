@@ -220,6 +220,7 @@ def main(config):
         if done:
             state, info = env.reset()
 
+
 if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read('hexgame/hexconfig.ini')
