@@ -92,8 +92,8 @@ class Hexagon(object):
 
 
 class Board(object):
-    def __init__(self, config):
-        self.centers = self._board_positions(config)
+    def __init__(self, pos, config):
+        self.centers = self._board_positions(config, pos)
         self.hexagons = list()
         self.config = config
         for pos in self.centers:
@@ -147,14 +147,14 @@ class Board(object):
                 return idx
         return None
 
-    def _board_positions(self, config):
+    def _board_positions(self, config, offset):
         long_radius = int(config["Hexagon"]["radius"])
         short_radius = np.sqrt(3) / 2 * long_radius
         board_size = int(config["HexGame"]["board_size"])
 
-        col_px = [idx * 1.5 * long_radius + long_radius
+        col_px = [idx * 1.5 * long_radius + long_radius + offset[0]
                   for idx in range(2 * board_size - 1)]
-        row_px = [(idx + 1) * short_radius
+        row_px = [(idx + 1) * short_radius + offset[1]
                   for idx in range(2 * board_size - 1)]
 
         stones_per_row = ([idx for idx in range(1, board_size)] +
@@ -163,9 +163,9 @@ class Board(object):
                      [idx for idx in range(board_size)])
 
         center_positions = list()
-        for offset in range(board_size):
-            y_start = board_size - 1 + offset
-            x_start = offset
+        for start_idx in range(board_size):
+            y_start = board_size - 1 + start_idx
+            x_start = start_idx
             for row_counter in range(board_size):
                 y_idx = y_start - row_counter
                 x_idx = x_start + row_counter
@@ -192,13 +192,15 @@ def main(config):
                    board_size=board_size)
     state, info = env.reset()
 
-    board = Board(config)
+    board = Board((50, 50), config)
 
     done = False
     running = True
     while running:
         mouse_pos = pygame.mouse.get_pos()
         hover_idx = board.pos2idx(mouse_pos)
+        board.draw(surface, env.simulator, mouse_pos)
+        pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -217,10 +219,6 @@ def main(config):
 
         if done:
             state, info = env.reset()
-
-        board.draw(surface, env.simulator, mouse_pos)
-        pygame.display.update()
-
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
