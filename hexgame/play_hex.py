@@ -8,6 +8,8 @@ from minihex import player
 import gym
 import random
 
+from hexgame.MinMaxAgent import MinMaxAgent
+
 
 class Hexagon(object):
     def __init__(self, config, offset=(0, 0)):
@@ -187,9 +189,17 @@ def main(config):
     screen_x, screen_y = game_conf["screen_size"].split(sep="x")
     surface = pygame.display.set_mode((int(screen_x), int(screen_y)))
 
+    opponent_string = config["HexGame"]["opponent"]
+    if opponent_string == "random":
+        opponent_policy = minihex.random_policy
+    elif opponent_string == "minmax":
+        opponent = MinMaxAgent(config, player=player.WHITE)
+        opponent_policy = opponent.act
+
     env = gym.make("hex-v0",
-                   opponent_policy=minihex.random_policy,
-                   board_size=board_size)
+                   opponent_policy=opponent_policy,
+                   board_size=board_size,
+                   debug=True)  # raise error on invalid actions
     state, info = env.reset()
 
     board = Board((50, 50), config)
