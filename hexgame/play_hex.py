@@ -116,7 +116,7 @@ class Board(object):
             hexagon.draw(surface, mouse_pos, stone)
 
     def draw_game_border(self, surface):
-        long_radius = int(self.config["GameWindow"]["hexagon_radius"])
+        long_radius = int(self.config["Hexagon"]["radius"])
         short_radius = np.sqrt(3) / 2 * long_radius
         board_size = int(config["HexGame"]["board_size"])
 
@@ -133,11 +133,11 @@ class Board(object):
         top = (center[0], center[1] - y_size - y_offset)
         bottom = (center[0], center[1] + y_size + y_offset)
 
-        color = pygame.Color(config["GameWindow"]["player1_stone_color"])
+        color = pygame.Color(config["Stone"]["player1_color"])
         pygame.draw.polygon(surface, color, [left, top, center])
         pygame.draw.polygon(surface, color, [center, bottom, right])
 
-        color = pygame.Color(config["GameWindow"]["player2_stone_color"])
+        color = pygame.Color(config["Stone"]["player2_color"])
         pygame.draw.polygon(surface, color, [top, right, center])
         pygame.draw.polygon(surface, color, [bottom, left, center])
 
@@ -148,8 +148,7 @@ class Board(object):
         return None
 
     def board_positions(self, config):
-        game_conf = config["GameWindow"]
-        long_radius = int(game_conf["hexagon_radius"])
+        long_radius = int(config["Hexagon"]["radius"])
         short_radius = np.sqrt(3) / 2 * long_radius
         board_size = int(config["HexGame"]["board_size"])
 
