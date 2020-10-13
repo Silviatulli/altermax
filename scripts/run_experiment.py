@@ -8,6 +8,7 @@ from multiprocessing import Pool, cpu_count, current_process
 import configparser
 import json
 import pandas as pd
+from copy import deepcopy
 
 
 def play_game(robot, child, *, isTraining=True,
@@ -31,16 +32,10 @@ def play_game(robot, child, *, isTraining=True,
 
             if isTraining:
                 if use_demonstrations:
-                    (demonstration_state,
-                     demonstration_action,
-                     demonstration_reward,
-                     demonstration_new_state) = robot.give_demonstration(action,
-                                                                         state)
+                    demonstration = robot.give_demonstration(action,
+                                                             state)
 
-                    child.demonstration_update(demonstration_state,
-                                               demonstration_action,
-                                               demonstration_reward,
-                                               demonstration_new_state)
+                    child.demonstration_update(*demonstration)
 
                     metrics["total_demonstrations"] += 1
                     metrics["total_experience"] += 1
@@ -74,14 +69,7 @@ def train(robot, child, config, *, metrics=None):
     use_demonstrations = config["Training"]["use_demonstrations"] == "True"
     use_explanations = config["Training"]["use_explanations"] == "True"
 
-    try:
-        pid = current_process()._identity[0]
-    except IndexError:
-        pid = 1
-    pbar = tqdm(range(num_episodes), desc=f"Thread {pid} - Training",
-                total=num_episodes, leave=False, position=pid)
-
-    for episode in pbar:
+    for episode in range(num_episodes):
         _, metrics = play_game(robot, child, metrics=metrics,
                                use_demonstrations=use_demonstrations,
                                use_explanations=use_explanations)
@@ -92,14 +80,7 @@ def evaluate(robot, child, config):
     num_episodes = int(config["Evaluation"]["Episodes"])
     win = 0
 
-    try:
-        pid = current_process()._identity[0]
-    except IndexError:
-        pid = 1
-    pbar = tqdm(range(num_episodes), desc=f"Thread {pid} - Evaluation",
-                total=num_episodes, leave=False, position=pid)
-
-    for episode in pbar:
+    for episode in range(num_episodes):
         outcome, num_actions = play_game(robot,
                                          child,
                                          isTraining=False)
@@ -110,9 +91,12 @@ def evaluate(robot, child, config):
     return win_rate_child
 
 
-def process(robot, child, config):
+def process(task):
+    robot, child, config = task
     num_episodes = int(config["Training"]["Episodes"])
     max_games = int(config["General"]["max_games"])
+    condition = int(config["General"]["Condition"])
+    trial_idx = int(config["General"]["trail_idx"])
 
     experience_log = list()
     winrate_log = list()
@@ -134,7 +118,7 @@ def process(robot, child, config):
         experience_log.append(experience_log[-1] + metrics["total_experience"])
         winrate_log.append(win_rate_child)
 
-    return (experience_log, winrate_log)
+    return (condition, trial_idx, experience_log, winrate_log)
 
 
 if __name__ == "__main__":
@@ -158,33 +142,39 @@ if __name__ == "__main__":
     if config["General"]["use_multiprocessing"] == "True":
         pool = Pool(processes=cpu_count() - 2)
 
-    pbar = tqdm(iter(conditions), desc="Condition", total=len(conditions))
-    for condition_idx, condition in enumerate(pbar):
+    tasks = list()
+    for condition_idx, condition in enumerate(conditions):
         result_logs[condition_idx] = {
             "total_examples": list(),
             "winrate": list()
         }
-        config["Training"]["use_demonstrations"] = str(
+
+        local_config = deepcopy(config)
+        local_config["Training"]["use_demonstrations"] = str(
             condition["use_demonstrations"])
-        config["Training"]["use_explanations"] = str(
+        local_config["Training"]["use_explanations"] = str(
             condition["use_explanations"])
+        local_config["General"]["Condition"] = str(condition_idx)
 
-        game_tuples = [(Robot(), ChildQlearning(), config)] * trials
-        if config["General"]["use_multiprocessing"] == "True":
-            performance_list = pool.starmap(process, game_tuples)
-        else:
-            performance_list = list()
-            for item in game_tuples:
-                performance_list.append(process(*item))
+        for trial_idx in range(trials):
+            local_config["General"]["trail_idx"] = str(trial_idx)
+            tasks += [(Robot(), ChildQlearning(), local_config)]
 
-        for trial_idx, performance in enumerate(performance_list):
-            experience_log, winrate_log = performance
-            for exp, winrate in zip(experience_log, winrate_log):
-                row = (condition_idx, trial_idx, exp, winrate)
-                dataframe.loc[total_rows] = row
-                total_rows += 1
+    if config["General"]["use_multiprocessing"] == "True":
+        iterable = pool.imap_unordered(process, tasks)
+    else:
+        iterable = map(process, tasks)
 
-        pbar.update()
+    pbar = tqdm(iterable, desc="Trials", total=len(tasks))
+    for result in pbar:
+        (condition_idx,
+         trial_idx,
+         experience_log,
+         winrate_log) = result
+        for exp, winrate in zip(experience_log, winrate_log):
+            row = (condition_idx, trial_idx, exp, winrate)
+            dataframe.loc[total_rows] = row
+            total_rows += 1
 
     if config["General"]["use_multiprocessing"] == "True":
         pool.close()
