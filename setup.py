@@ -15,6 +15,7 @@ setup(
         'gym',
         'pygame',
         'openpyxl',
-        'pandas'
+        'pandas',
+        'cachetools'
     ]
 )

@@ -1,9 +1,11 @@
 from minmax.game_model import GameState
-import functools
 from copy import deepcopy
+import cachetools
 
 
 class Node(GameState):
+    __slots__ = ['balls', 'is_child_turn']
+
     def __init__(self, is_child_turn=None, balls=None):
         if is_child_turn is None:
             super(Node, self).__init__()
@@ -20,27 +22,43 @@ class Node(GameState):
             return 0
 
     def children(self):
+        # Note: Children are read-only
         nodes = list()
 
-        # populate tree
         for valid_action in self.valid_actions():
-            env_copy = deepcopy(self)
+            if self.is_child_turn:
+                ball_dict_copy = {
+                    'robot': self.balls['robot'],
+                    'child': self.balls['child'].copy()
+                }
+            else:
+                ball_dict_copy = {
+                    'robot': self.balls['robot'].copy(),
+                    'child': self.balls['child']
+                }
+
+            env_copy = Node(
+                is_child_turn=self.is_child_turn,
+                balls=ball_dict_copy
+            )
+            # env_copy = deepcopy(self)
             env_copy.make_action(valid_action)
-            # node = Node(env_copy.is_child_turn, env_copy.balls)
             nodes.append(env_copy)
 
         return nodes
 
 
-@functools.lru_cache(maxsize=int(5e5), typed=False)
+@cachetools.cached(cache=cachetools.LRUCache(int(1e5)),
+                   key=lambda n, d: (GameState.get_state_id(n), d))
 def minimax(node, depth):
     score = node.score()
-    children = node.children()
     isFinished = node.isFinished()
     maximizingPlayer = node.is_child_turn
 
     if depth == 0 or isFinished:
         return score
+
+    children = node.children()
 
     if maximizingPlayer:
         value = -1
@@ -60,9 +78,9 @@ def V(state):
     return value
 
 
-@functools.lru_cache(maxsize=int(5e5), typed=False)
+@cachetools.cached(cache=cachetools.LRUCache(int(1e5)),
+                   key=lambda s, a: (GameState.get_state_id(s), a))
 def Q(state, action):
-    action = action
     env_copy = deepcopy(state)
     env_copy.make_action(action)
     q_value = V(env_copy)
