@@ -1,6 +1,27 @@
 from minmax.game_model import GameState
-from copy import deepcopy
 import cachetools
+
+
+def lazy_copy(node):
+    """
+    this copy is meant to have a single move performed on it
+    and otherwise shares as much data as possible with its parent
+    """
+    if node.is_child_turn:
+        ball_dict_copy = {
+            'robot': node.balls['robot'],
+            'child': node.balls['child'].copy()
+        }
+    else:
+        ball_dict_copy = {
+            'robot': node.balls['robot'].copy(),
+            'child': node.balls['child']
+        }
+
+    return Node(
+        is_child_turn=node.is_child_turn,
+        balls=ball_dict_copy
+    )
 
 
 class Node(GameState):
@@ -26,29 +47,14 @@ class Node(GameState):
         nodes = list()
 
         for valid_action in self.valid_actions():
-            if self.is_child_turn:
-                ball_dict_copy = {
-                    'robot': self.balls['robot'],
-                    'child': self.balls['child'].copy()
-                }
-            else:
-                ball_dict_copy = {
-                    'robot': self.balls['robot'].copy(),
-                    'child': self.balls['child']
-                }
-
-            env_copy = Node(
-                is_child_turn=self.is_child_turn,
-                balls=ball_dict_copy
-            )
-            # env_copy = deepcopy(self)
+            env_copy = lazy_copy(self)
             env_copy.make_action(valid_action)
             nodes.append(env_copy)
 
         return nodes
 
 
-@cachetools.cached(cache=cachetools.LRUCache(int(1e5)),
+@cachetools.cached(cache=cachetools.Cache(int(1e5)),
                    key=lambda n, d: (GameState.get_state_id(n), d))
 def minimax(node, depth):
     score = node.score()
@@ -78,10 +84,11 @@ def V(state):
     return value
 
 
-@cachetools.cached(cache=cachetools.LRUCache(int(1e5)),
-                   key=lambda s, a: (GameState.get_state_id(s), a))
+# @cachetools.cached(cache=cachetools.LRUCache(int(1e5)),
+#                    key=lambda s, a: (GameState.get_state_id(s), a))
 def Q(state, action):
-    env_copy = deepcopy(state)
+
+    env_copy = lazy_copy(state)
     env_copy.make_action(action)
     q_value = V(env_copy)
     return q_value
