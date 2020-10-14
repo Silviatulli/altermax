@@ -4,11 +4,11 @@ from minmax.robot_decision import Robot
 from minmax.game_model import GameState
 from tqdm import tqdm
 import numpy as np
-from multiprocessing import Pool, cpu_count, current_process
+from multiprocessing import Pool
 import configparser
-import json
 import pandas as pd
 from copy import deepcopy
+from itertools import count
 
 
 def play_game(robot, child, *, isTraining=True,
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     config.read('scripts/TugOfWar.ini')
 
     total_rows = 0
-    dataframe = pd.DataFrame(columns=["Condition", "Trial",
+    dataframe = pd.DataFrame(columns=["Condition", "Trial", "Game",
                                       "Total Examples", "Winrate"])
 
     trials = int(config["General"]["trials"])
@@ -140,7 +140,8 @@ if __name__ == "__main__":
     result_logs = dict()
 
     if config["General"]["use_multiprocessing"] == "True":
-        pool = Pool(processes=cpu_count() - 2)
+        num_workers = int(config["General"]["num_workers"])
+        pool = Pool(processes=num_workers)
 
     tasks = list()
     for condition_idx, condition in enumerate(conditions):
@@ -149,14 +150,13 @@ if __name__ == "__main__":
             "winrate": list()
         }
 
-        local_config = deepcopy(config)
-        local_config["Training"]["use_demonstrations"] = str(
-            condition["use_demonstrations"])
-        local_config["Training"]["use_explanations"] = str(
-            condition["use_explanations"])
-        local_config["General"]["Condition"] = str(condition_idx)
-
         for trial_idx in range(trials):
+            local_config = deepcopy(config)
+            local_config["Training"]["use_demonstrations"] = str(
+                condition["use_demonstrations"])
+            local_config["Training"]["use_explanations"] = str(
+                condition["use_explanations"])
+            local_config["General"]["Condition"] = str(condition_idx)
             local_config["General"]["trail_idx"] = str(trial_idx)
             tasks += [(Robot(), ChildQlearning(), local_config)]
 
@@ -171,8 +171,9 @@ if __name__ == "__main__":
          trial_idx,
          experience_log,
          winrate_log) = result
-        for exp, winrate in zip(experience_log, winrate_log):
-            row = (condition_idx, trial_idx, exp, winrate)
+        iterable = zip(count(), experience_log, winrate_log)
+        for game_idx, exp, winrate in iterable:
+            row = (condition_idx, trial_idx, game_idx, exp, winrate)
             dataframe.loc[total_rows] = row
             total_rows += 1
 
