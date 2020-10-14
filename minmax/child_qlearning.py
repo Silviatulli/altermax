@@ -2,6 +2,7 @@ import numpy as np
 import random
 from minmax import GameState, Action
 
+
 class ChildQlearning(object):
     def __init__(self):
         num_states = (12 * 12)**2 * 2
@@ -42,26 +43,30 @@ class ChildQlearning(object):
         gamma = 0.99
         V_star = np.max(self.q_table[new_state, :])
         q_sa = self.Q(state, action)
-        q_value = (1-alpha)*q_sa + alpha * (reward + gamma * V_star)
+        q_value = (1 - alpha) * q_sa + alpha * (reward + gamma * V_star)
 
         self.q_table[state, action] = q_value
-
-        return
 
     def demonstration_update(self, state, action, reward, new_state):
         new_state_idx = GameState.get_state_id(new_state)
         state_idx = GameState.get_state_id(state)
         alpha = 0.8
         gamma = 0.99
-        q_value = (1-alpha)*self.Q(state_idx, action) + alpha * \
+        q_value = (1 - alpha) * self.Q(state_idx, action) + alpha * \
             (reward + gamma * np.max(self.q_table[new_state_idx, :]))
 
         self.q_table[state_idx, action] = q_value
-        return
 
     def examples_update(self, examples):
-        return
+        for example in examples:
+            self.update(*example)
 
+    def other_actions_update(self, state, other_actions_matrix):
+        state_idx = GameState.get_state_id(state)
 
-    def other_actions_update(self, other_actions_matrix):
-        return
+        for action, reward in other_actions_matrix:
+            next_state = state.lazy_copy()
+            next_state.make_action(action)
+            next_state_idx = GameState.get_state_id(next_state)
+
+            self.update(state_idx, action, reward, next_state_idx)

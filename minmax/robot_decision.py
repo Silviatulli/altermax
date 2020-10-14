@@ -2,7 +2,6 @@
 import numpy as np
 from minmax import GameState
 from minmax.minmaxSearch import Q
-from copy import deepcopy
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.style
@@ -36,7 +35,7 @@ class Robot(object):
 
     def give_demonstration(self, action, state):
         old_score = state.get_score('child')
-        new_state = deepcopy(state)
+        new_state = state.lazy_copy()
         new_state.make_action(action)
 
         reward = old_score - state.get_score('child')
@@ -47,7 +46,7 @@ class Robot(object):
         valid_actions = state.valid_actions()
         scores = []
         for iter_action in valid_actions:
-            current_state = deepcopy(state)
+            current_state = state.lazy_copy()
             current_state.make_action(iter_action)
             score = current_state.get_score('robot')
             scores.append(score)
@@ -81,7 +80,7 @@ class Robot(object):
         valid_actions = state.valid_actions()
         scores = []
         for iter_action in valid_actions:
-            current_state = deepcopy(state)
+            current_state = state.lazy_copy()
             current_state.make_action(iter_action)
             score = current_state.get_score('robot')
             scores.append(score)
@@ -122,10 +121,10 @@ class Robot(object):
                                                  size=10)
             for state_idx in candidate_states:
                 state = GameState.get_state(state_idx)
-                if (not state.is_child_turn and
-                        state.isValid() and
-                        not state.isFinished() and
-                        len(state.valid_actions()) > 0):
+                if (not state.is_child_turn
+                        and state.isValid()
+                        and not state.isFinished()
+                        and len(state.valid_actions()) > 0):
                     valid_states.append(state_idx)
 
         valid_states = valid_states[:num_examples]
@@ -138,6 +137,7 @@ class Robot(object):
                 best_action)
             reward = robot_state.get_score(
                 'child') - new_state.get_score('child')
-            example = (robot_state, best_action, reward, new_state)
+            example = (robot_state_idx, best_action, reward,
+                       GameState.get_state_id(new_state))
             examples.append(example)
         return examples

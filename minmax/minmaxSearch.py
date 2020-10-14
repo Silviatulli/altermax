@@ -2,37 +2,8 @@ from minmax.game_model import GameState
 import cachetools
 
 
-def lazy_copy(node):
-    """
-    this copy is meant to have a single move performed on it
-    and otherwise shares as much data as possible with its parent
-    """
-    if node.is_child_turn:
-        ball_dict_copy = {
-            'robot': node.balls['robot'],
-            'child': node.balls['child'].copy()
-        }
-    else:
-        ball_dict_copy = {
-            'robot': node.balls['robot'].copy(),
-            'child': node.balls['child']
-        }
-
-    return Node(
-        is_child_turn=node.is_child_turn,
-        balls=ball_dict_copy
-    )
-
-
 class Node(GameState):
     __slots__ = ['balls', 'is_child_turn']
-
-    def __init__(self, is_child_turn=None, balls=None):
-        if is_child_turn is None:
-            super(Node, self).__init__()
-        else:
-            self.is_child_turn = is_child_turn
-            self.balls = balls
 
     def score(self):
         if not self.is_child_turn and self.isFinished():
@@ -47,11 +18,18 @@ class Node(GameState):
         nodes = list()
 
         for valid_action in self.valid_actions():
-            env_copy = lazy_copy(self)
+            env_copy = self.lazy_copy()
             env_copy.make_action(valid_action)
             nodes.append(env_copy)
 
         return nodes
+
+    def lazy_copy(self):
+        other = super(Node, self).lazy_copy()
+        return Node(
+            balls=other.balls,
+            is_child_turn=other.is_child_turn
+        )
 
 
 @cachetools.cached(cache=cachetools.Cache(int(1e5)),
@@ -87,8 +65,7 @@ def V(state):
 # @cachetools.cached(cache=cachetools.LRUCache(int(1e5)),
 #                    key=lambda s, a: (GameState.get_state_id(s), a))
 def Q(state, action):
-
-    env_copy = lazy_copy(state)
+    env_copy = state.lazy_copy()
     env_copy.make_action(action)
     q_value = V(env_copy)
     return q_value
