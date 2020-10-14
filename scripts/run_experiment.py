@@ -88,12 +88,14 @@ def process(task):
     use_explanations = config["Training"]["use_explanations"] == "True"
     filter_length = int(config["Training"]["RollingAvgFilterLength"])
     threshold = float(config["Evaluation"]["threshold"])
+    max_samples = int(config["General"]["max_samples"])
 
     result_rows = list()
     wins_log = list()
 
     total_examples = 0
-    for episode in range(num_episodes):
+    episode = 0
+    while total_examples < max_samples:
         outcome, metrics = play_game(robot, child, metrics=None,
                                      use_demonstrations=use_demonstrations,
                                      use_explanations=use_explanations)
@@ -106,6 +108,7 @@ def process(task):
         result_rows.append((condition, trial, episode,
                             total_examples, rolling_winrate, outcome))
 
+        episode += 1
         if rolling_winrate > threshold:
             break
 
