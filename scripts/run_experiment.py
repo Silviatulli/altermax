@@ -58,22 +58,10 @@ def play_game(robot, child, *, isTraining=True,
             metrics["total_experience"] += 1
 
     if state.is_child_turn and state.isFinished():
-        outcome = -1
+        outcome = 0
     elif not state.is_child_turn and state.isFinished():
         outcome = 1
     return outcome, metrics
-
-
-def train(robot, child, config, *, metrics=None):
-    num_episodes = int(config["Training"]["Episodes"])
-    use_demonstrations = config["Training"]["use_demonstrations"] == "True"
-    use_explanations = config["Training"]["use_explanations"] == "True"
-
-    for episode in range(num_episodes):
-        _, metrics = play_game(robot, child, metrics=metrics,
-                               use_demonstrations=use_demonstrations,
-                               use_explanations=use_explanations)
-    return metrics
 
 
 def evaluate(robot, child, config):
@@ -94,40 +82,47 @@ def evaluate(robot, child, config):
 def process(task):
     robot, child, config = task
     num_episodes = int(config["Training"]["Episodes"])
-    max_games = int(config["General"]["max_games"])
     condition = int(config["General"]["Condition"])
-    trial_idx = int(config["General"]["trail_idx"])
+    trial = int(config["General"]["trail_idx"])
+    use_demonstrations = config["Training"]["use_demonstrations"] == "True"
+    use_explanations = config["Training"]["use_explanations"] == "True"
+    filter_length = int(config["Training"]["RollingAvgFilterLength"])
+    threshold = float(config["Evaluation"]["threshold"])
 
-    experience_log = list()
-    winrate_log = list()
+    result_rows = list()
+    wins_log = list()
 
-    minimaxChild = ChildMinmax()
-    threshold = evaluate(robot, minimaxChild, config)
+    total_examples = 0
+    for episode in range(num_episodes):
+        outcome, metrics = play_game(robot, child, metrics=None,
+                                     use_demonstrations=use_demonstrations,
+                                     use_explanations=use_explanations)
 
-    win_rate_child = evaluate(robot, child, config)
-    experience_log.append(0)
-    winrate_log.append(win_rate_child)
+        wins_log.append(outcome)
+        low = max([0, len(wins_log) - filter_length])
+        rolling_winrate = sum(wins_log[low:]) / filter_length
 
-    games_played = 0
-    while win_rate_child < threshold or games_played < max_games:
-        metrics = train(robot, child, config)
+        total_examples += metrics["total_experience"]
+        result_rows.append((condition, trial, episode,
+                            total_examples, rolling_winrate, outcome))
 
-        games_played += num_episodes
+        if rolling_winrate > threshold:
+            break
 
-        win_rate_child = evaluate(robot, child, config)
-        experience_log.append(experience_log[-1] + metrics["total_experience"])
-        winrate_log.append(win_rate_child)
-
-    return (condition, trial_idx, experience_log, winrate_log)
+    return result_rows
 
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read('scripts/TugOfWar.ini')
 
+    minimaxChild = ChildMinmax()
+    threshold = evaluate(Robot(), minimaxChild, config)
+    config["Evaluation"]["threshold"] = str(threshold)
+
     total_rows = 0
-    dataframe = pd.DataFrame(columns=["Condition", "Trial", "Game",
-                                      "Total Examples", "Winrate"])
+    dataframe = pd.DataFrame(columns=["Condition", "Trial", "Episode",
+                                      "Total Examples", "Winrate", "Result"])
 
     trials = int(config["General"]["trials"])
     conditions = [
@@ -167,13 +162,7 @@ if __name__ == "__main__":
 
     pbar = tqdm(iterable, desc="Trials", total=len(tasks))
     for result in pbar:
-        (condition_idx,
-         trial_idx,
-         experience_log,
-         winrate_log) = result
-        iterable = zip(count(), experience_log, winrate_log)
-        for game_idx, exp, winrate in iterable:
-            row = (condition_idx, trial_idx, game_idx, exp, winrate)
+        for row in result:
             dataframe.loc[total_rows] = row
             total_rows += 1
 
