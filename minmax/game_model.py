@@ -30,10 +30,12 @@ OCCUPIED = np.pad(np.zeros((2, 6)), 1, constant_values=1)
 
 
 class GameState(object):
+    __slots__ = ['balls', 'is_child_turn']
+
     def __init__(self):
         self.balls = {
-            'robot': [np.array([0, 0]), np.array([1, 0])],
-            'child': [np.array([0, 5]), np.array([1, 5])]
+            'robot': [(0, 0), (1, 0)],
+            'child': [(0, 5), (1, 5)]
         }
         self.is_child_turn = True
 
@@ -88,10 +90,12 @@ class GameState(object):
 
         ball_id = 0 if action < 9 else 1
         ball_position = self.balls[player][ball_id]
-        new_position = ball_position + DIRECTION[action]
-
+        y = ball_position[0] + DIRECTION[action][0]
+        x = ball_position[1] + DIRECTION[action][1]
+        new_position = (y, x)
         self.balls[player][ball_id] = new_position
         self.is_child_turn = not self.is_child_turn
+
         if not self.isValid():
             raise Exception()
         return self, 0, self.isFinished(), None
@@ -135,8 +139,10 @@ class GameState(object):
             ball_id = 0 if action < 9 else 1
             other_ball_id = (ball_id + 1) % 2
             pos = self.balls[player][ball_id]
-            y2, x2 = self.balls[player][other_ball_id] + 1
-            y, x = pos + DIRECTION[action] + 1
+            y2 = self.balls[player][other_ball_id][0] + 1
+            x2 = self.balls[player][other_ball_id][1] + 1
+            y = pos[0] + DIRECTION[action][0] + 1
+            x = pos[1] + DIRECTION[action][1] + 1
             if OCCUPIED[y, x]:
                 continue
             elif y == y2 and x == x2:
@@ -220,10 +226,10 @@ class GameState(object):
 
         state = GameState()
         # convert the state to array index
-        state.balls['robot'][0] = np.array(robot_ball1)
-        state.balls['robot'][1] = np.array(robot_ball2)
-        state.balls['child'][0] = np.array(child_ball1)
-        state.balls['child'][1] = np.array(child_ball2)
+        state.balls['robot'][0] = tuple(robot_ball1)
+        state.balls['robot'][1] = tuple(robot_ball2)
+        state.balls['child'][0] = tuple(child_ball1)
+        state.balls['child'][1] = tuple(child_ball2)
         state.is_child_turn = turn
 
         return state

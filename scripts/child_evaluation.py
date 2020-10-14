@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from multiprocessing import Pool, cpu_count
 
+
 def play_game(robot, child, isTraining=True):
     state = GameState()
     num_actions = 0
@@ -35,21 +36,18 @@ def play_game(robot, child, isTraining=True):
                 examples = robot.give_examples()
                 child.examples_update(examples)
 
-                #other_actions = robot.give_other_actions(action,state)
-                #child.other_actions_update(other_actions)
-
+                # other_actions = robot.give_other_actions(action,state)
+                # child.other_actions_update(other_actions)
 
         old_state_idx = GameState.get_state_id(state)
         old_score = state.get_score('child')
         state, reward, done, info = state.make_action(action)
         new_state_idx = GameState.get_state_id(state)
-        
 
         if isTraining:
-            reward = old_score - state.get_score('child')   
+            reward = old_score - state.get_score('child')
             child.update(old_state_idx, action, reward, new_state_idx)
-        
-            
+
     if state.is_child_turn and state.isFinished():
         outcome = -1
     elif not state.is_child_turn and state.isFinished():
@@ -71,10 +69,9 @@ def evaluate(robot, child):
                                          isTraining=False)
         if outcome == 1:
             win += 1
-    win_rate_child = win * 1.0/num_episodes
+    win_rate_child = win * 1.0 / num_episodes
 
     return win_rate_child
-
 
 
 def process(robot, child):
@@ -88,13 +85,6 @@ def process(robot, child):
         games_played += episodes_between_evaluations
         win_rate_child = evaluate(robot, child)
         print("QLearningChild performance: {0}".format(win_rate_child))
-    
-<<<<<<< HEAD
-=======
-    #other_actions_matrix = robot.other_actions
-    #plt.imshow(other_actions_matrix)
-    #plt.show()
->>>>>>> c06f2e42171a6e9519228198f1f9fa0f0f81fdf7
 
     return games_played
 
@@ -104,9 +94,7 @@ if __name__ == "__main__":
         game_tuples = [(Robot(), ChildQlearning())] * 5
         performance_list = pool.starmap(process, game_tuples)
 
-        average_performance = sum(performance_list)/len(performance_list)
+        average_performance = sum(performance_list) / len(performance_list)
         msg_average = ("QLearning need {0} episodes on average"
                        " to be as good as the minmax.")
         print(msg_average.format(average_performance))
-
-

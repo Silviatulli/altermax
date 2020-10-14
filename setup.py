@@ -13,6 +13,9 @@ setup(
         'matplotlib >= 3.2.1',
         'minihex',
         'gym',
-        'pygame'
+        'pygame',
+        'openpyxl',
+        'pandas',
+        'cachetools'
     ]
 )
