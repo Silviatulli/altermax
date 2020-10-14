@@ -2,10 +2,12 @@
 import numpy as np
 from minmax import GameState
 from minmax.minmaxSearch import Q
+import cachetools
 
 
 class ChildMinmax(object):
-
+    @cachetools.cached(cache=cachetools.LRUCache(int(1e5)),
+                       key=lambda self, s: GameState.get_state_id(s))
     def policy(self, state):
         valid_actions = state.valid_actions()
         best_action = valid_actions[0]
