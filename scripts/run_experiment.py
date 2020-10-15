@@ -32,21 +32,16 @@ def play_game(robot, child, *, isTraining=True,
 
             if isTraining:
                 if use_demonstrations:
-                    # demonstration = robot.give_demonstration(action,
-                    #                                          state)
-
-                    # child.demonstration_update(*demonstration)
-                    examples = robot.give_examples()
-                    child.examples_update(examples)
-
-                    metrics["total_demonstrations"] += len(examples)
-                    metrics["total_experience"] += len(examples)
+                    demonstrations = robot.give_examples()
+                    child.examples_update(demonstrations)
+                    metrics["total_demonstrations"] += len(demonstrations)
+                    metrics["total_experience"] += len(demonstrations)
 
                 if use_explanations:
-                    other_actions = robot.give_other_actions(action, state)
-                    child.other_actions_update(state, other_actions)
-                    metrics["total_explanations"] += len(other_actions)
-                    metrics["total_experience"] += len(other_actions)
+                    explanations = robot.generate_explanations(action, state)
+                    child.explanation_update(explanations)
+                    metrics["total_explanations"] += len(explanations)
+                    metrics["total_experience"] += len(explanations)
 
         old_state_idx = GameState.get_state_id(state)
         old_score = state.get_score('child')

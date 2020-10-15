@@ -61,12 +61,14 @@ class ChildQlearning(object):
         for example in examples:
             self.update(*example)
 
-    def other_actions_update(self, state, other_actions_matrix):
-        state_idx = GameState.get_state_id(state)
-
-        for action, reward in other_actions_matrix:
-            next_state = state.lazy_copy()
-            next_state.make_action(action)
-            next_state_idx = GameState.get_state_id(next_state)
-
-            self.update(state_idx, action, reward, next_state_idx)
+    def explanation_update(self, explanations):
+        for explanation in explanations:
+            (state_idx, _, _, reward,
+             alternative_action, alternative_state_idx,
+             score_difference) = explanation
+            self.update(
+                state_idx,
+                alternative_action,
+                score_difference + reward,
+                alternative_state_idx
+            )
