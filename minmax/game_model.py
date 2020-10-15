@@ -32,12 +32,15 @@ OCCUPIED = np.pad(np.zeros((2, 6)), 1, constant_values=1)
 class GameState(object):
     __slots__ = ['balls', 'is_child_turn']
 
-    def __init__(self):
-        self.balls = {
-            'robot': [(0, 0), (1, 0)],
-            'child': [(0, 5), (1, 5)]
-        }
-        self.is_child_turn = True
+    def __init__(self, *, balls=None, is_child_turn=True):
+        if balls is None:
+            self.balls = {
+                'robot': [(0, 0), (1, 0)],
+                'child': [(0, 5), (1, 5)]
+            }
+        else:
+            self.balls = balls
+        self.is_child_turn = is_child_turn
 
     def get_score(self, player):
         values = np.array([[800, 400, 80, 40, 8, 4],
@@ -243,6 +246,28 @@ class GameState(object):
             return 'robot'
         else:
             return 'child'
+
+    def lazy_copy(self):
+        """
+        this copy is meant to have a single move performed on it
+        and otherwise shares as much data as possible with its parent
+        """
+
+        if self.is_child_turn:
+            balls = {
+                'robot': self.balls['robot'],
+                'child': self.balls['child'].copy()
+            }
+        else:
+            balls = {
+                'robot': self.balls['robot'].copy(),
+                'child': self.balls['child']
+            }
+
+        return GameState(
+            is_child_turn=self.is_child_turn,
+            balls=balls
+        )
 
 
 if __name__ == "__main__":

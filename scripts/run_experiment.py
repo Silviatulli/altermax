@@ -32,19 +32,16 @@ def play_game(robot, child, *, isTraining=True,
 
             if isTraining:
                 if use_demonstrations:
-                    demonstration = robot.give_demonstration(action,
-                                                             state)
-
-                    child.demonstration_update(*demonstration)
-
-                    metrics["total_demonstrations"] += 1
-                    metrics["total_experience"] += 1
+                    demonstrations = robot.give_examples()
+                    child.examples_update(demonstrations)
+                    metrics["total_demonstrations"] += len(demonstrations)
+                    metrics["total_experience"] += len(demonstrations)
 
                 if use_explanations:
-                    examples = robot.give_examples()
-                    child.examples_update(examples)
-                    metrics["total_explanations"] += len(examples)
-                    metrics["total_experience"] += len(examples)
+                    explanations = robot.generate_explanations(action, state)
+                    child.explanation_update(explanations)
+                    metrics["total_explanations"] += len(explanations)
+                    metrics["total_experience"] += len(explanations)
 
         old_state_idx = GameState.get_state_id(state)
         old_score = state.get_score('child')
@@ -88,12 +85,14 @@ def process(task):
     use_explanations = config["Training"]["use_explanations"] == "True"
     filter_length = int(config["Training"]["RollingAvgFilterLength"])
     threshold = float(config["Evaluation"]["threshold"])
+    max_samples = int(config["General"]["max_samples"])
 
     result_rows = list()
     wins_log = list()
 
     total_examples = 0
-    for episode in range(num_episodes):
+    episode = 0
+    while total_examples < max_samples:
         outcome, metrics = play_game(robot, child, metrics=None,
                                      use_demonstrations=use_demonstrations,
                                      use_explanations=use_explanations)
@@ -106,6 +105,7 @@ def process(task):
         result_rows.append((condition, trial, episode,
                             total_examples, rolling_winrate, outcome))
 
+        episode += 1
         if rolling_winrate > threshold:
             break
 
