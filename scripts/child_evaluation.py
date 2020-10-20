@@ -33,11 +33,11 @@ def play_game(robot, child, isTraining=True):
                                            demonstration_reward,
                                            demonstration_new_state)
 
-                examples = robot.give_examples()
-                child.examples_update(examples)
+                #examples = robot.give_examples()
+                #child.examples_update(examples)
 
-                # other_actions = robot.give_other_actions(action,state)
-                # child.other_actions_update(other_actions)
+                explanations = robot.generate_explanations(action,state)
+                child.explanation_update(explanations)
 
         old_state_idx = GameState.get_state_id(state)
         old_score = state.get_score('child')
