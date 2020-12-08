@@ -61,30 +61,13 @@ def play_game(robot, child, *, isTraining=True,
     return outcome, metrics
 
 
-def evaluate(robot, child, config):
-    num_episodes = int(config["Evaluation"]["Episodes"])
-    win = 0
-
-    for episode in range(num_episodes):
-        outcome, num_actions = play_game(robot,
-                                         child,
-                                         isTraining=False)
-        if outcome == 1:
-            win += 1
-    win_rate_child = win * 1.0 / num_episodes
-
-    return win_rate_child
-
-
 def process(task):
     robot, child, config = task
-    num_episodes = int(config["Training"]["Episodes"])
     condition = int(config["General"]["Condition"])
     trial = int(config["General"]["trail_idx"])
     use_demonstrations = config["Training"]["use_demonstrations"] == "True"
     use_explanations = config["Training"]["use_explanations"] == "True"
     filter_length = int(config["Training"]["RollingAvgFilterLength"])
-    threshold = float(config["Evaluation"]["threshold"])
     max_samples = int(config["General"]["max_samples"])
 
     result_rows = list()
@@ -106,8 +89,6 @@ def process(task):
                             total_examples, rolling_winrate, outcome))
 
         episode += 1
-        if rolling_winrate > threshold:
-            break
 
     return result_rows
 
@@ -115,10 +96,6 @@ def process(task):
 if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read('scripts/TugOfWar.ini')
-
-    minimaxChild = ChildMinmax()
-    threshold = evaluate(Robot(), minimaxChild, config)
-    config["Evaluation"]["threshold"] = str(threshold)
 
     total_rows = 0
     dataframe = pd.DataFrame(columns=["Condition", "Trial", "Episode",
