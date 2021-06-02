@@ -44,7 +44,3 @@ evaluates the child performance
 links the view, the game model and the robot decision
   - plays the game
   - returns the child outcome and number of actions
-  
-- **robot_manager.py**;
-controls the physical robot
-  - speech, animations, facetracking
