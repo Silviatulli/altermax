@@ -1,5 +1,11 @@
-## Demo Simulator
-run: python3 game_mananger.py
+##Learning from Explanations and Demonstrations: A Pilot Study
+We discuss the relationship between explainability and knowledge transfer in reinforcement learning. We argue that explainability methods, in particular methods that use counterfactuals, might help increasing sample efficiency. For this, we present a computational approach to optimize the learner's performance using explanations of another agent and discuss our results in light of effective natural language explanations for both agents and humans. 
+
+This repository contains the implementation for the research paper [Learning from Explanations and Demonstrations: A Pilot Study](https://www.aclweb.org/anthology/2020.nl4xai-1.13/).
+
+
+## Test
+to run the code: python3 game_mananger.py
 
 ## File-by-File Details
 
