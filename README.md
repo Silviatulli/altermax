@@ -1,7 +1,7 @@
 ## Learning from Explanations and Demonstrations: A Pilot Study
 We discuss the relationship between explainability and knowledge transfer in reinforcement learning. We argue that explainability methods, in particular methods that use counterfactuals, might help increasing sample efficiency. For this, we present a computational approach to optimize the learner's performance using explanations of another agent and discuss our results in light of effective natural language explanations for both agents and humans. 
 
-This repository contains the implementation for the research paper [Learning from Explanations and Demonstrations: A Pilot Study](https://www.aclweb.org/anthology/2020.nl4xai-1.13/).
+For additional details about the research work you can check out our paper [Learning from Explanations and Demonstrations: A Pilot Study](https://www.aclweb.org/anthology/2020.nl4xai-1.13/).
 
 
 ## Test
